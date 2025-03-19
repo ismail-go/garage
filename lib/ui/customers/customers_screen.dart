@@ -21,7 +21,7 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 148),
       itemCount: viewModel.customers.length + 1,
       itemBuilder: (context, index) {
         if (index == 0) {

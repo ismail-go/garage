@@ -19,8 +19,18 @@ class HomeScreenState extends BaseState<HomeViewModel, HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      extendBody: true,
       appBar: AppBar(
-        title: Text("Gozen Otomotiv"),
+        title: Observer(builder: (context) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(viewModel.currentIndex == 0 ? "Gozen Otomotiv" : "Müşteriler"),
+              Icon(viewModel.currentIndex == 0 ? Icons.settings : Icons.add_circle_outline)
+            ],
+          );
+        }),
       ),
       bottomNavigationBar: Observer(builder: (context) {
         return BottomNavigationBar(

@@ -47,7 +47,8 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
             textAlign: TextAlign.center,
           ),
           _option(context, "Accounts", Icons.account_balance_wallet),
-          _option(context, "Vehicles", Icons.car_repair)
+          _option(context, "Vehicles", Icons.car_repair),
+          _option(context, "Credit", Icons.car_repair)
         ],
       ),
     );

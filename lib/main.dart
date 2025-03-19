@@ -25,12 +25,13 @@ class MyApp extends StatelessWidget {
           splashFactory: NoSplash.splashFactory,
           highlightColor: Colors.transparent,
           bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.white.withValues(alpha: .9),
             selectedItemColor: ThemeData().primaryColor,
             unselectedItemColor: ThemeData().disabledColor,
           ),
           appBarTheme: AppBarTheme(
-            backgroundColor: ThemeData().primaryColor,
+            iconTheme: IconThemeData(color: Colors.white70),
+            backgroundColor: ThemeData().primaryColor.withValues(alpha: .9),
             titleTextStyle: TextStyle(
               color: ThemeData().primaryColorLight,
               fontSize: 24,

@@ -3,6 +3,7 @@ import 'package:garage/core/base/base_state.dart';
 import 'package:garage/ui/customers/customers_screen.dart';
 import 'package:garage/ui/home/home_view_model.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_sheet.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,15 +21,13 @@ class HomeScreenState extends BaseState<HomeViewModel, HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
+      resizeToAvoidBottomInset: true,
       extendBody: true,
       appBar: AppBar(
         title: Observer(builder: (context) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(viewModel.currentIndex == 0 ? "Gozen Otomotiv" : "Müşteriler"),
-              Icon(viewModel.currentIndex == 0 ? Icons.settings : Icons.add_circle_outline)
-            ],
+            children: [Text(viewModel.currentIndex == 0 ? "Gozen Otomotiv" : "Müşteriler"), appbarButton()],
           );
         }),
       ),
@@ -51,6 +50,21 @@ class HomeScreenState extends BaseState<HomeViewModel, HomeScreen> {
           CustomersScreen(),
         ],
       ),
+    );
+  }
+
+  GestureDetector appbarButton() {
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          scrollControlDisabledMaxHeightRatio: 0.9,
+          builder: (context) {
+            return AddCustomerBottomSheet();
+          },
+        );
+      },
+      child: Icon(viewModel.currentIndex == 0 ? Icons.settings : Icons.add_circle_outline),
     );
   }
 }

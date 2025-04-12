@@ -20,19 +20,21 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 148),
-      itemCount: viewModel.customers.length + 1,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return _searchBar();
-        }
-        final customer = viewModel.customers[index - 1];
-        return Observer(builder: (context) {
-          return searchCondition(customer) ? _customerItem(customer) : SizedBox.shrink();
-        });
-      },
-    );
+    return Observer(builder: (context) {
+      return ListView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 148),
+        itemCount: viewModel.customers.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return _searchBar();
+          }
+          final customer = viewModel.customers[index - 1];
+          return Observer(builder: (context) {
+            return searchCondition(customer) ? _customerItem(customer) : SizedBox.shrink();
+          });
+        },
+      );
+    });
   }
 
   Card _customerItem(Customer customer) {

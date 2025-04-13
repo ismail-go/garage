@@ -26,7 +26,7 @@ class _MainScreenState extends BaseState<MainViewModel, MainScreen> {
         title: Observer(builder: (context) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text(viewModel.currentIndex == 0 ? "Gozen Otomotiv" : "Müşteriler"), appbarButton()],
+            children: [Text(viewModel.currentIndex == 0 ? "Gözen Otomotiv" : "Müşteriler"), appbarButton()],
           );
         }),
       ),

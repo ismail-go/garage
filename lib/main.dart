@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:garage/ui/home/home_screen.dart';
+import 'package:garage/ui/main/main_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
               fontSize: 24,
             ),
           )),
-      home: HomeScreen(),
+      home: MainScreen(),
     );
   }
 }

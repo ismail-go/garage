@@ -6,9 +6,6 @@ part 'home_view_model.g.dart';
 class HomeViewModel = _HomeViewModel with _$HomeViewModel;
 
 abstract class _HomeViewModel extends BaseViewModel with Store {
-  @observable
-  int currentIndex = 0;
-
   @override
   void init() {
     // TODO: implement init

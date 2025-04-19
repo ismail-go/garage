@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:garage/data/fake_data.dart';
-import 'package:garage/data/model/customer.dart';
-import 'package:garage/data/model/customer_data.dart';
+import 'package:garage/data/model/customer/customer.dart';
+import 'package:garage/data/model/customer/customer_data.dart';
+import 'package:garage/data/model/work_order/work_order.dart';
+import 'package:garage/data/model/work_order/work_order_data.dart';
 import 'package:mobx/mobx.dart';
 
 part 'db_manager.g.dart';
@@ -18,6 +20,10 @@ abstract class _DbManager with Store {
   @observable
   List<Customer> customers = [];
 
+  // Store for holding the list of customers
+  @observable
+  List<WorkOrder> workOrders = [];
+
   // Example method to initialize customers
   @action
   void initCustomers() {
@@ -25,6 +31,15 @@ abstract class _DbManager with Store {
     Map<String, dynamic> jsonMap = jsonDecode(FakeData.customerData);
     CustomerData data = CustomerData.fromJson(jsonMap);
     customers = data.customers;
+  }
+
+  // Example method to initialize customers
+  @action
+  void initWorkOrders() {
+    // Converting the JSON to a CustomerList object
+    Map<String, dynamic> jsonMap = jsonDecode(FakeData.workOrdersData);
+    WorkOrderData data = WorkOrderData.fromJson(jsonMap);
+    workOrders = data.workOrders;
   }
 
   // Example method to add a customer

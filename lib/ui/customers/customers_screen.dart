@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:garage/core/base/base_state.dart';
-import 'package:garage/data/model/customer.dart';
+import 'package:garage/data/model/customer/customer.dart';
 import 'package:garage/ui/customer_detail/customer_detail_screen.dart';
 import 'package:garage/ui/customers/customers_view_model.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_sheet.dart';

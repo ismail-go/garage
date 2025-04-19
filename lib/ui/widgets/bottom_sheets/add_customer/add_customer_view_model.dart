@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:garage/core/base/base_view_model.dart';
 import 'package:garage/data/managers/db_manager.dart';
-import 'package:garage/data/model/customer.dart';
+import 'package:garage/data/model/customer/customer.dart';
 import 'package:mobx/mobx.dart';
 
 part 'add_customer_view_model.g.dart';

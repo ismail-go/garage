@@ -1,7 +1,7 @@
 import 'package:garage/core/base/base_view_model.dart';
 import 'package:mobx/mobx.dart';
 
-import '../../data/model/customer.dart';
+import '../../data/model/customer/customer.dart';
 
 part 'customer_detail_view_model.g.dart';
 

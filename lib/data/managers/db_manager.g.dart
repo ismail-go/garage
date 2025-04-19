@@ -25,6 +25,22 @@ mixin _$DbManager on _DbManager, Store {
     });
   }
 
+  late final _$workOrdersAtom =
+      Atom(name: '_DbManager.workOrders', context: context);
+
+  @override
+  List<WorkOrder> get workOrders {
+    _$workOrdersAtom.reportRead();
+    return super.workOrders;
+  }
+
+  @override
+  set workOrders(List<WorkOrder> value) {
+    _$workOrdersAtom.reportWrite(value, super.workOrders, () {
+      super.workOrders = value;
+    });
+  }
+
   late final _$_DbManagerActionController =
       ActionController(name: '_DbManager', context: context);
 
@@ -34,6 +50,17 @@ mixin _$DbManager on _DbManager, Store {
         name: '_DbManager.initCustomers');
     try {
       return super.initCustomers();
+    } finally {
+      _$_DbManagerActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void initWorkOrders() {
+    final _$actionInfo = _$_DbManagerActionController.startAction(
+        name: '_DbManager.initWorkOrders');
+    try {
+      return super.initWorkOrders();
     } finally {
       _$_DbManagerActionController.endAction(_$actionInfo);
     }
@@ -53,7 +80,8 @@ mixin _$DbManager on _DbManager, Store {
   @override
   String toString() {
     return '''
-customers: ${customers}
+customers: ${customers},
+workOrders: ${workOrders}
     ''';
   }
 }

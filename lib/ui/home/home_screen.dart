@@ -33,13 +33,7 @@ class HomeScreenState extends BaseState<HomeViewModel, HomeScreen> {
           padding: const EdgeInsets.only(left: 16.0),
           child: Text("İş Emirleri", style: Theme.of(context).textTheme.titleMedium),
         ),
-        _workOrderCardItem(context),
-        _workOrderCardItem(context),
-        _workOrderCardItem(context),
-        _workOrderCardItem(context),
-        _workOrderCardItem(context),
-        _workOrderCardItem(context),
-        _workOrderCardItem(context),
+        ...List.generate(viewModel.workOrders.length, (index) => _workOrderCardItem(context))
       ],
     );
   }

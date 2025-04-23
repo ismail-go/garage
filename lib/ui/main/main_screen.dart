@@ -23,10 +23,17 @@ class _MainScreenState extends BaseState<MainViewModel, MainScreen> {
       resizeToAvoidBottomInset: true,
       extendBody: true,
       appBar: AppBar(
+        titleSpacing: 0,
         title: Observer(builder: (context) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text(viewModel.currentIndex == 0 ? "Gözen Otomotiv" : "Müşteriler"), appbarButton()],
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(viewModel.currentIndex == 0 ? "Gözen Otomotiv" : "Müşteriler"),
+              ),
+              appbarButton(),
+            ],
           );
         }),
       ),
@@ -55,15 +62,22 @@ class _MainScreenState extends BaseState<MainViewModel, MainScreen> {
   GestureDetector appbarButton() {
     return GestureDetector(
       onTap: () {
-        showModalBottomSheet(
-          context: context,
-          scrollControlDisabledMaxHeightRatio: 0.9,
-          builder: (context) {
-            return AddCustomerBottomSheet();
-          },
-        );
+        if (viewModel.currentIndex == 0) {
+        } else {
+          showModalBottomSheet(
+            context: context,
+            scrollControlDisabledMaxHeightRatio: 0.9,
+            builder: (context) {
+              return AddCustomerBottomSheet();
+            },
+          );
+        }
       },
-      child: Icon(viewModel.currentIndex == 0 ? Icons.settings : Icons.add_circle_outline),
+      child: Container(
+        color: Colors.transparent,
+        padding: const EdgeInsets.all(16.0),
+        child: Icon(Icons.add_circle_outline),
+      ),
     );
   }
 }

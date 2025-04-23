@@ -7,7 +7,7 @@ class WorkState {
   State state;
 
   @JsonKey(name: 'time', fromJson: _durationFromMilliseconds, toJson: _durationToMilliseconds)
-  Duration time;
+  DateTime time;
 
   WorkState({required this.state, required this.time});
 
@@ -15,9 +15,9 @@ class WorkState {
 
   Map<String, dynamic> toJson() => _$WorkStateToJson(this);
 
-  static Duration _durationFromMilliseconds(int milliseconds) => Duration(milliseconds: milliseconds);
+  static DateTime _durationFromMilliseconds(int milliseconds) => DateTime.fromMillisecondsSinceEpoch(milliseconds);
 
-  static int _durationToMilliseconds(Duration duration) => duration.inMilliseconds;
+  static int _durationToMilliseconds(DateTime time) => time.millisecondsSinceEpoch;
 }
 
 enum State {

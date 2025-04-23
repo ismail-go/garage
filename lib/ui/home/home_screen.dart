@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:garage/core/base/base_state.dart';
+import 'package:garage/data/helper.dart';
+import 'package:garage/data/managers/route_manager.dart';
+import 'package:garage/data/model/work_order/work_order.dart';
 import 'package:garage/gen/assets.gen.dart';
 import 'package:garage/ui/home/home_view_model.dart';
 
@@ -33,56 +36,61 @@ class HomeScreenState extends BaseState<HomeViewModel, HomeScreen> {
           padding: const EdgeInsets.only(left: 16.0),
           child: Text("İş Emirleri", style: Theme.of(context).textTheme.titleMedium),
         ),
-        ...List.generate(viewModel.workOrders.length, (index) => _workOrderCardItem(context))
+        ...List.generate(viewModel.workOrders.length, (index) => _workOrderCardItem(viewModel.workOrders[index]))
       ],
     );
   }
 
-  Card _workOrderCardItem(BuildContext context) {
-    return Card(
-        child: Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        children: [
-          CircleAvatar(
-            child: Icon(Icons.person),
-          ),
-          SizedBox(width: 8.0),
-          Expanded(
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.person_3, size: 20, color: Colors.black45),
-                    SizedBox(width: 4.0),
-                    Text("İsmail Gözen ", style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Assets.icons.repairmanIcon.svg(height: 18, width: 18, color: Colors.black45),
-                    SizedBox(width: 4.0),
-                    Text("Mehmet Usta ", style: Theme.of(context).textTheme.titleMedium),
-                    Spacer(),
-                    Text("Beklemede", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.red)),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Assets.icons.truckIcon.svg(height: 12, width: 12, color: Colors.black45),
-                    SizedBox(width: 4.0),
-                    Text("20 ADY 012", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
-                    Spacer(),
-                    Icon(Icons.calendar_month, size: 20, color: Colors.black45),
-                    Text("Dün", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
-                  ],
-                ),
-              ],
+  Widget _workOrderCardItem(WorkOrder order) {
+    return InkWell(
+      onTap: () {
+        RouteManager.showWorkOrderScreen(context, order);
+      },
+      child: Card(
+          child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              child: Icon(Icons.person),
             ),
-          ),
-        ],
-      ),
-    ));
+            SizedBox(width: 8.0),
+            Expanded(
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.person_3, size: 20, color: Colors.black45),
+                      SizedBox(width: 4.0),
+                      Text(order.customerName, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Assets.icons.repairmanIcon.svg(height: 18, width: 18, color: Colors.black45),
+                      SizedBox(width: 4.0),
+                      Text(order.repairmanName, style: Theme.of(context).textTheme.titleMedium),
+                      Spacer(),
+                      Text(order.workState.state.name, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.red)),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Assets.icons.truckIcon.svg(height: 12, width: 12, color: Colors.black45),
+                      SizedBox(width: 4.0),
+                      Text(order.plateNo, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
+                      Spacer(),
+                      Icon(Icons.calendar_month, size: 20, color: Colors.black45),
+                      Text(formatSmartDate(order.workState.time), style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      )),
+    );
   }
 
   Column _availableCreditCard(BuildContext context) {

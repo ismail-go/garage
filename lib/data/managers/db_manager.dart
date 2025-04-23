@@ -39,6 +39,7 @@ abstract class _DbManager with Store {
     // Converting the JSON to a CustomerList object
     Map<String, dynamic> jsonMap = jsonDecode(FakeData.workOrdersData);
     WorkOrderData data = WorkOrderData.fromJson(jsonMap);
+    data.workOrders.sort((a, b) => b.workState.time.millisecondsSinceEpoch.compareTo(a.workState.time.millisecondsSinceEpoch));
     workOrders = data.workOrders;
   }
 

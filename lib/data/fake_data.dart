@@ -193,7 +193,7 @@ class FakeData {
     "plate_no": "34 ABC 123",
     "work_state": {
       "state": "working",
-      "time": 1745073000000
+      "time": 1735073000000
     }
   },
   {
@@ -205,7 +205,7 @@ class FakeData {
     "plate_no": "06 DEF 456",
     "work_state": {
       "state": "registered",
-      "time": 1745053200000
+      "time": 1740053200000
     }
   },
   {

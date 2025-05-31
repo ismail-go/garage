@@ -78,7 +78,7 @@ class HomeScreenState extends BaseState<HomeViewModel, HomeScreen> {
                     children: [
                       Assets.icons.truckIcon.svg(height: 12, width: 12, color: Colors.black45),
                       SizedBox(width: 4.0),
-                      Text(order.plateNo, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
+                      Text(order.vehicleId, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
                       Spacer(),
                       Icon(Icons.calendar_month, size: 20, color: Colors.black45),
                       Text(formatSmartDate(order.workState.time), style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),

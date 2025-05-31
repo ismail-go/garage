@@ -41,40 +41,72 @@ mixin _$DbManager on _DbManager, Store {
     });
   }
 
-  late final _$_DbManagerActionController =
-      ActionController(name: '_DbManager', context: context);
+  late final _$initCustomersAsyncAction =
+      AsyncAction('_DbManager.initCustomers', context: context);
 
   @override
-  void initCustomers() {
-    final _$actionInfo = _$_DbManagerActionController.startAction(
-        name: '_DbManager.initCustomers');
-    try {
-      return super.initCustomers();
-    } finally {
-      _$_DbManagerActionController.endAction(_$actionInfo);
-    }
+  Future<void> initCustomers() {
+    return _$initCustomersAsyncAction.run(() => super.initCustomers());
   }
 
-  @override
-  void initWorkOrders() {
-    final _$actionInfo = _$_DbManagerActionController.startAction(
-        name: '_DbManager.initWorkOrders');
-    try {
-      return super.initWorkOrders();
-    } finally {
-      _$_DbManagerActionController.endAction(_$actionInfo);
-    }
-  }
+  late final _$initWorkOrdersAsyncAction =
+      AsyncAction('_DbManager.initWorkOrders', context: context);
 
   @override
-  void addCustomer(Customer customer) {
-    final _$actionInfo = _$_DbManagerActionController.startAction(
-        name: '_DbManager.addCustomer');
-    try {
-      return super.addCustomer(customer);
-    } finally {
-      _$_DbManagerActionController.endAction(_$actionInfo);
-    }
+  Future<void> initWorkOrders() {
+    return _$initWorkOrdersAsyncAction.run(() => super.initWorkOrders());
+  }
+
+  late final _$addCustomerAsyncAction =
+      AsyncAction('_DbManager.addCustomer', context: context);
+
+  @override
+  Future<void> addCustomer(Customer customer) {
+    return _$addCustomerAsyncAction.run(() => super.addCustomer(customer));
+  }
+
+  late final _$addWorkOrderAsyncAction =
+      AsyncAction('_DbManager.addWorkOrder', context: context);
+
+  @override
+  Future<void> addWorkOrder(WorkOrder workOrder) {
+    return _$addWorkOrderAsyncAction.run(() => super.addWorkOrder(workOrder));
+  }
+
+  late final _$updateCustomerAsyncAction =
+      AsyncAction('_DbManager.updateCustomer', context: context);
+
+  @override
+  Future<void> updateCustomer(String nationalId, Customer customer) {
+    return _$updateCustomerAsyncAction
+        .run(() => super.updateCustomer(nationalId, customer));
+  }
+
+  late final _$updateWorkOrderAsyncAction =
+      AsyncAction('_DbManager.updateWorkOrder', context: context);
+
+  @override
+  Future<void> updateWorkOrder(String vehicleId, WorkOrder workOrder) {
+    return _$updateWorkOrderAsyncAction
+        .run(() => super.updateWorkOrder(vehicleId, workOrder));
+  }
+
+  late final _$deleteCustomerAsyncAction =
+      AsyncAction('_DbManager.deleteCustomer', context: context);
+
+  @override
+  Future<void> deleteCustomer(String nationalId) {
+    return _$deleteCustomerAsyncAction
+        .run(() => super.deleteCustomer(nationalId));
+  }
+
+  late final _$deleteWorkOrderAsyncAction =
+      AsyncAction('_DbManager.deleteWorkOrder', context: context);
+
+  @override
+  Future<void> deleteWorkOrder(String vehicleId) {
+    return _$deleteWorkOrderAsyncAction
+        .run(() => super.deleteWorkOrder(vehicleId));
   }
 
   @override

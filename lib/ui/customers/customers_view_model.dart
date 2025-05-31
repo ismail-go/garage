@@ -8,14 +8,26 @@ part 'customers_view_model.g.dart';
 class CustomersViewModel = _CustomersViewModel with _$CustomersViewModel;
 
 abstract class _CustomersViewModel extends BaseViewModel with Store {
-  List<Customer> get customers => dbManager.customers;
+  @observable
+  ObservableList<Customer> customers = ObservableList<Customer>();
 
   @observable
   String searchValue = "";
 
+  @observable
+  bool isLoading = true;
+
+  @action
+  Future<void> loadCustomers() async {
+    isLoading = true;
+    await dbManager.initCustomers();
+    customers = ObservableList.of(dbManager.customers);
+    isLoading = false;
+  }
+
   @override
   void init() {
-    dbManager.initCustomers();
+    loadCustomers();
   }
 
   @override

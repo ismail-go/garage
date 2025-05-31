@@ -28,8 +28,8 @@ class _WorkOrderScreenState extends BaseState<WorkOrderViewModel, WorkOrderScree
           children: [
             Assets.icons.repairmanIcon.svg(height: 24),
             SizedBox(width: 8),
-            Text(viewModel.workOrder.customerName),
-            SizedBox(width: 36),
+            Text(viewModel.workOrder.repairmanName),
+            SizedBox(width: 52),
           ],
         ),
       ),
@@ -55,15 +55,16 @@ class _WorkOrderScreenState extends BaseState<WorkOrderViewModel, WorkOrderScree
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(viewModel.workOrder.customerName, style: Theme.of(context).textTheme.titleLarge),
-                      Text(viewModel.workOrder.plateNo, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black54)),
+                      Text(viewModel.workOrder.vehicleId, style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black54)),
                     ],
                   ),
                 ],
               ),
             ),
-            Expanded(
+            SizedBox(height: 16),
+            SizedBox(
+              height: 100,
               child: Timeline.tileBuilder(
-                shrinkWrap: true,
                 theme: TimelineThemeData(
                   direction: Axis.horizontal,
                   connectorTheme: const ConnectorThemeData(
@@ -75,10 +76,7 @@ class _WorkOrderScreenState extends BaseState<WorkOrderViewModel, WorkOrderScree
                   connectionDirection: ConnectionDirection.before,
                   itemExtentBuilder: (_, __) => MediaQuery.of(context).size.width / viewModel.processes.length,
                   oppositeContentsBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 15.0),
-                      child: Assets.icons.truckIcon.svg(height: 20),
-                    );
+                    return buildStateIcon(index);
                   },
                   contentsBuilder: (context, index) {
                     return Padding(
@@ -185,6 +183,31 @@ class _WorkOrderScreenState extends BaseState<WorkOrderViewModel, WorkOrderScree
           ],
         ),
       ),
+    );
+  }
+
+  Padding buildStateIcon(int index) {
+    late Widget icon;
+    switch (index) {
+      case 0:
+        icon = Assets.icons.truckIcon.svg(height: 20);
+        break;
+      case 1:
+        icon = Assets.icons.repairmanIcon.svg(height: 20);
+        break;
+      case 2:
+        icon = Assets.icons.truckIcon.svg(height: 20);
+        break;
+      case 3:
+        icon = Assets.icons.truckIcon.svg(height: 20);
+        break;
+      case 4:
+        icon = Assets.icons.truckIcon.svg(height: 20);
+        break;
+    }
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 15.0),
+      child: icon,
     );
   }
 }

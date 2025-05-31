@@ -24,7 +24,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
             child: Icon(Icons.edit),
           )
         ],
-        title: Text("Müşteri Bilgisi"),
+        title: Text("Customer Details"),
       ),
       body: ListView(
         padding: EdgeInsets.symmetric(horizontal: 16),
@@ -33,44 +33,124 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
             height: 120,
             width: 120,
             margin: EdgeInsets.only(top: 32, bottom: 20),
-            decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.grey.shade200),
-            child: Icon(Icons.person, size: 80, color: Colors.black38),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.grey.shade200,
+              image: viewModel.customer.profilePhotoUrl.isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(viewModel.customer.profilePhotoUrl),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+            ),
+            child: viewModel.customer.profilePhotoUrl.isEmpty
+                ? Icon(Icons.person, size: 80, color: Colors.black38)
+                : null,
           ),
           Text(
-            "${viewModel.customer.name} ${viewModel.customer.surname}",
+            viewModel.customer.fullName,
             style: Theme.of(context).textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
-          Text(
-            viewModel.customer.telNo,
-            style: Theme.of(context).textTheme.labelLarge,
-            textAlign: TextAlign.center,
+          if (viewModel.customer.companyName.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Text(
+                viewModel.customer.companyName,
+                style: Theme.of(context).textTheme.titleLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Text(
+              viewModel.customer.phoneNumber,
+              style: Theme.of(context).textTheme.labelLarge,
+              textAlign: TextAlign.center,
+            ),
           ),
-          _option(context, "Accounts", Icons.account_balance_wallet),
-          _option(context, "Vehicles", Icons.car_repair),
-          _option(context, "Credit", Icons.car_repair)
+          _detailCard(context),
+          if (viewModel.customer.vehicles.isNotEmpty)
+            _vehiclesCard(context),
         ],
       ),
     );
   }
 
-  Container _option(BuildContext context, String title, IconData icon) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      margin: EdgeInsets.only(top: 16),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.grey.shade200,
+  Widget _detailCard(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 16),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _detailItem(context, "Email", viewModel.customer.email),
+            _detailItem(context, "National ID", viewModel.customer.nationalId),
+            _detailItem(context, "Tax ID", viewModel.customer.taxId),
+            _detailItem(context, "Owner Type", viewModel.customer.ownerType),
+            _detailItem(context, "Address", viewModel.customer.address),
+            _detailItem(context, "Created", _formatDate(viewModel.customer.createdAt)),
+            _detailItem(context, "Last Updated", _formatDate(viewModel.customer.updatedAt)),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _vehiclesCard(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Vehicles",
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            SizedBox(height: 8),
+            ...viewModel.customer.vehicles.map((vehicle) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4.0),
+                  child: Text(vehicle),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _detailItem(BuildContext context, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon),
-          SizedBox(width: 12),
-          Text(title, style: Theme.of(context).textTheme.labelLarge),
-          Spacer(),
-          Icon(Icons.chevron_right),
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  String _formatDate(int timestamp) {
+    final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    return "${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}";
   }
 }

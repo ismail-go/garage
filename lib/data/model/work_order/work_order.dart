@@ -11,12 +11,12 @@ class WorkOrder {
   String repairmanName;
   @JsonKey(name: 'repairman_id')
   String repairmanId;
-  @JsonKey(name: 'customer_tc_no')
-  String customerTcNo;
-  @JsonKey(name: 'tel_no')
-  String telNo;
-  @JsonKey(name: 'plate_no')
-  String plateNo;
+  @JsonKey(name: 'customer_id')
+  String customerId;
+  @JsonKey(name: 'phone_number')
+  String phoneNumber;
+  @JsonKey(name: 'vehicle_id')
+  String vehicleId;
   @JsonKey(name: 'work_state')
   WorkState workState;
 
@@ -24,9 +24,9 @@ class WorkOrder {
     required this.customerName,
     required this.repairmanName,
     required this.repairmanId,
-    required this.customerTcNo,
-    required this.telNo,
-    required this.plateNo,
+    required this.customerId,
+    required this.phoneNumber,
+    required this.vehicleId,
     required this.workState,
   });
 

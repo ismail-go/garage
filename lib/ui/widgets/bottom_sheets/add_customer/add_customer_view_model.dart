@@ -11,12 +11,18 @@ class AddCustomerViewModel = _AddCustomerViewModel with _$AddCustomerViewModel;
 abstract class _AddCustomerViewModel extends BaseViewModel with Store {
   final formKey = GlobalKey<FormState>();
   late final Customer newCustomer;
-  String name = "";
-  String surname = "";
-  String tcNo = "";
-  String taxNo = "";
-  String telNo = "";
+  
   String address = "";
+  String companyName = "";
+  String email = "";
+  String fullName = "";
+  String nationalId = "";
+  String ownerId = "";
+  String ownerType = "";
+  String phoneNumber = "";
+  String profilePhotoUrl = "";
+  String taxId = "";
+  List<String> vehicles = [];
 
   @override
   void init() {}
@@ -29,7 +35,22 @@ abstract class _AddCustomerViewModel extends BaseViewModel with Store {
   void onTapSave(BuildContext context) {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
-      newCustomer = Customer(name: name, surname: surname, tcNo: tcNo, taxNo: taxNo, telNo: telNo, address: address, debit: 0.0);
+      final now = DateTime.now().millisecondsSinceEpoch;
+      newCustomer = Customer(
+        address: address,
+        companyName: companyName,
+        createdAt: now,
+        email: email,
+        fullName: fullName,
+        nationalId: nationalId,
+        ownerId: ownerId,
+        ownerType: ownerType,
+        phoneNumber: phoneNumber,
+        profilePhotoUrl: profilePhotoUrl,
+        taxId: taxId,
+        updatedAt: now,
+        vehicles: vehicles,
+      );
       dbManager.addCustomer(newCustomer);
     }
     Navigator.pop(context); // Close the bottom sheet

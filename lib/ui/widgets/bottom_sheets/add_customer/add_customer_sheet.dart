@@ -24,61 +24,74 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Müşteri Ekle',
+                  'Add Customer',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 20),
                 _inputField(
-                  label: 'Ad',
+                  label: 'Full Name',
                   onSave: (value) {
-                    viewModel.name = value ?? "";
+                    viewModel.fullName = value ?? "";
                   },
                 ),
                 SizedBox(height: 10),
                 _inputField(
-                  label: 'Soyad',
+                  label: 'Company Name',
                   onSave: (value) {
-                    viewModel.surname = value ?? "";
+                    viewModel.companyName = value ?? "";
                   },
                 ),
                 SizedBox(height: 10),
                 _inputField(
                   label: 'Email',
-                  onSave: (value) {},
-                ),
-                SizedBox(height: 10),
-                _inputField(
-                  label: 'Telefon',
-                  keyboardType: const TextInputType.numberWithOptions(signed: true),
                   onSave: (value) {
-                    viewModel.telNo = value ?? "";
+                    viewModel.email = value ?? "";
                   },
                 ),
                 SizedBox(height: 10),
                 _inputField(
-                  label: 'Tc No',
-                  keyboardType: const TextInputType.numberWithOptions(signed: true),
+                  label: 'Phone Number',
+                  keyboardType: TextInputType.phone,
                   onSave: (value) {
-                    viewModel.tcNo = value ?? "";
+                    viewModel.phoneNumber = value ?? "";
                   },
                 ),
                 SizedBox(height: 10),
                 _inputField(
-                  label: 'Vergi No',
-                  keyboardType: const TextInputType.numberWithOptions(signed: true),
+                  label: 'National ID',
+                  keyboardType: TextInputType.number,
                   onSave: (value) {
-                    viewModel.taxNo = value ?? "";
+                    viewModel.nationalId = value ?? "";
                   },
                 ),
                 SizedBox(height: 10),
                 _inputField(
-                  label: 'Adres',
+                  label: 'Tax ID',
+                  keyboardType: TextInputType.number,
+                  onSave: (value) {
+                    viewModel.taxId = value ?? "";
+                  },
+                ),
+                SizedBox(height: 10),
+                _inputField(
+                  label: 'Address',
+                  maxLines: 3,
                   onSave: (value) {
                     viewModel.address = value ?? "";
                   },
                 ),
+                SizedBox(height: 10),
+                _inputField(
+                  label: 'Owner Type',
+                  onSave: (value) {
+                    viewModel.ownerType = value ?? "";
+                  },
+                ),
                 SizedBox(height: 20),
-                ElevatedButton(onPressed: () => viewModel.onTapSave(context), child: Text('Kaydet')),
+                ElevatedButton(
+                  onPressed: () => viewModel.onTapSave(context),
+                  child: Text('Save'),
+                ),
               ],
             ),
           ),
@@ -87,9 +100,15 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
     );
   }
 
-  Widget _inputField({required String label, TextInputType? keyboardType, required Function(String?) onSave}) {
+  Widget _inputField({
+    required String label,
+    TextInputType? keyboardType,
+    int? maxLines,
+    required Function(String?) onSave
+  }) {
     return TextFormField(
       onSaved: onSave,
+      maxLines: maxLines ?? 1,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(

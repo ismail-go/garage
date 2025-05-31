@@ -22,6 +22,10 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
+      if (viewModel.isLoading) {
+        return Center(child: CircularProgressIndicator());
+      }
+      
       return ListView.builder(
         padding: EdgeInsets.all(16).add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, top: MediaQuery.of(context).padding.top)),
         itemCount: viewModel.customers.length + 1,
@@ -53,8 +57,24 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
             ),
           );
         },
-        title: Text("${customer.name} ${customer.surname.toUpperCase()}"),
-        subtitle: Padding(padding: const EdgeInsets.only(top: 8.0), child: Text("${customer.telNo} ")),
+        leading: CircleAvatar(
+          backgroundColor: Colors.grey.shade300,
+          backgroundImage: customer.profilePhotoUrl.isNotEmpty
+              ? NetworkImage(customer.profilePhotoUrl)
+              : null,
+          child: customer.profilePhotoUrl.isEmpty
+              ? Icon(Icons.person, color: Colors.black38)
+              : null,
+        ),
+        title: Text(customer.fullName),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (customer.companyName.isNotEmpty)
+              Text(customer.companyName),
+            Text(customer.phoneNumber),
+          ],
+        ),
         trailing: Icon(Icons.chevron_right),
       ),
     );
@@ -79,8 +99,10 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
   }
 
   bool searchCondition(Customer customer) {
-    return customer.name.toLowerCase().contains(viewModel.searchValue.toLowerCase()) ||
-        customer.surname.toLowerCase().contains(viewModel.searchValue.toLowerCase()) ||
-        customer.telNo.toLowerCase().contains(viewModel.searchValue.toLowerCase());
+    final searchLower = viewModel.searchValue.toLowerCase();
+    return customer.fullName.toLowerCase().contains(searchLower) ||
+        customer.companyName.toLowerCase().contains(searchLower) ||
+        customer.phoneNumber.toLowerCase().contains(searchLower) ||
+        customer.email.toLowerCase().contains(searchLower);
   }
 }

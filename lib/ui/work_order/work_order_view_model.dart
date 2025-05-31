@@ -21,11 +21,11 @@ abstract class _WorkOrderViewModel extends BaseViewModel with Store {
   final todoColor = Color(0xffd1d2d7);
 
   final processes = [
-    'Prospect',
-    'Tour',
-    'Offer',
-    'Contract',
-    'Settled',
+    'Giriş',
+    'Kontrol',
+    'Tamir',
+    'Test',
+    'Teslim',
   ];
 
   Color getColor(int index) {

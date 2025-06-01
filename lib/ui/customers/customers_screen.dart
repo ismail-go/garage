@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:garage/core/base/base_state.dart';
-import 'package:garage/data/managers/db_manager.dart';
 import 'package:garage/data/model/customer/customer.dart';
 import 'package:garage/ui/customer_detail/customer_detail_screen.dart';
 import 'package:garage/ui/customers/customers_view_model.dart';
@@ -12,7 +11,7 @@ import '../customer_detail/customer_detail_view_model.dart';
 
 class CustomersScreen extends StatefulWidget {
   final CustomersViewModel viewModel;
-  
+
   const CustomersScreen({
     super.key,
     required this.viewModel,
@@ -22,64 +21,101 @@ class CustomersScreen extends StatefulWidget {
   State<CustomersScreen> createState() => _CustomersScreenState(viewModel);
 }
 
-class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScreen> {
+class _CustomersScreenState
+    extends BaseState<CustomersViewModel, CustomersScreen> {
+  late TextEditingController _searchController;
+  late FocusNode _searchFocusNode;
+
   _CustomersScreenState(super.viewModel);
 
   @override
+  void initState() {
+    super.initState();
+    _searchController = TextEditingController(text: viewModel.searchValue);
+    _searchFocusNode = FocusNode();
+    _searchFocusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      // This will trigger a rebuild, allowing AnimatedSwitcher
+      // to pick up the change in its child based on _searchFocusNode.hasFocus
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Customer>>(
-      stream: viewModel.customerStream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          if (!snapshot.hasData) {
-             return Center(child: CircularProgressIndicator());
-          }
-        }
-
-        if (snapshot.hasError) {
-          print("Error in customer stream: ${snapshot.error}");
-          return Center(child: Text("Error loading customers. Please try again."));
-        }
-
-        if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Stack(
-            children: [
-              _searchBar(),
-              Center(child: Text('No customers found')),
-            ],
-          );
-        }
-
-        final allCustomers = snapshot.data!;
-        final filteredCustomers = allCustomers.where((customer) => searchCondition(customer)).toList();
-
-        return Stack(
-          children: [
-            ListView.builder(
-              padding: EdgeInsets.all(16).add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, top: MediaQuery.of(context).padding.top)),
-              itemCount: filteredCustomers.length + 1,
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return _searchBar();
-                }
-                final customer = filteredCustomers[index - 1];
-                return _customerItem(customer);
-              },
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: SafeArea(
+            bottom: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: _searchBar(),
             ),
-            if (allCustomers.isNotEmpty && filteredCustomers.isEmpty && viewModel.searchValue.isNotEmpty) 
-              Center(
-                 child: Text('No customers match your search.')
-              ),
-          ],
-        );
-      },
+          ),
+        ),
+        StreamBuilder<List<Customer>>(
+          stream: viewModel.customerStream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting &&
+                !snapshot.hasData) {
+              return SliverFillRemaining(
+                  child: Center(child: CircularProgressIndicator()));
+            }
+
+            if (snapshot.hasError) {
+              print("Error in customer stream: ${snapshot.error}");
+              return SliverFillRemaining(
+                  child: Center(
+                      child:
+                          Text("Error loading customers. Please try again.")));
+            }
+
+            final allCustomers = snapshot.data;
+
+            if (allCustomers == null || allCustomers.isEmpty) {
+              return SliverFillRemaining(
+                  child: Center(child: Text('No customers found. Add one!')));
+            }
+
+            return Observer(builder: (context) {
+              final filteredCustomers = allCustomers
+                  .where((customer) => searchCondition(customer))
+                  .toList();
+
+              if (filteredCustomers.isEmpty) {
+                return SliverFillRemaining(
+                    child: Center(
+                        child: Text('No customers match your search.')));
+              }
+              
+              return SliverPadding(
+                padding: EdgeInsets.fromLTRB(
+                    16, 0, 16, MediaQuery.of(context).padding.bottom + 16),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final customer = filteredCustomers[index];
+                      return _customerItem(customer);
+                    },
+                    childCount: filteredCustomers.length,
+                  ),
+                ),
+              );
+            });
+          },
+        ),
+      ],
     );
   }
 
   Widget _customerItem(Customer customer) {
     return Card(
       margin: EdgeInsets.symmetric(vertical: 4),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12))),
       color: Colors.grey.shade200,
       shadowColor: Colors.transparent,
       child: ListTile(
@@ -91,9 +127,9 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
           Navigator.push(
             context,
             CupertinoPageRoute(
-                builder: (context) => CustomerDetailScreen(
-                  viewModel: customerDetailViewModel,
-                ),
+              builder: (context) => CustomerDetailScreen(
+                viewModel: customerDetailViewModel,
+              ),
             ),
           );
         },
@@ -110,8 +146,7 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (customer.companyName.isNotEmpty)
-              Text(customer.companyName),
+            if (customer.companyName.isNotEmpty) Text(customer.companyName),
             Text(customer.phoneNumber),
           ],
         ),
@@ -121,24 +156,57 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
   }
 
   Widget _searchBar() {
-    return Observer(builder: (_) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 8.0),
-        child: CupertinoSearchTextField(
-          controller: TextEditingController(text: viewModel.searchValue),
-          borderRadius: BorderRadius.circular(12),
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-          prefixInsets: EdgeInsets.only(left: 12),
-          suffixInsets: EdgeInsets.only(right: 12),
-          backgroundColor: Colors.grey.shade200,
-          smartDashesType: SmartDashesType.disabled,
-          smartQuotesType: SmartQuotesType.disabled,
-          onChanged: (value) {
-            viewModel.searchValue = value;
-          },
-        ),
-      );
-    });
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: CupertinoSearchTextField(
+              controller: _searchController,
+              focusNode: _searchFocusNode,
+              borderRadius: BorderRadius.circular(12),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              prefixInsets: EdgeInsets.only(left: 12),
+              suffixInsets: EdgeInsets.only(right: 12),
+              backgroundColor: Colors.grey.shade200,
+              smartDashesType: SmartDashesType.disabled,
+              smartQuotesType: SmartQuotesType.disabled,
+              onChanged: (value) {
+                viewModel.searchValue = value;
+              },
+            ),
+          ),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SizeTransition(
+                  sizeFactor: animation,
+                  axis: Axis.horizontal,
+                  child: child,
+                ),
+              );
+            },
+            child: _searchFocusNode.hasFocus
+                ? Padding(
+                    key: ValueKey('cancelButton'), // Key for AnimatedSwitcher
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: CupertinoButton(
+                      padding: EdgeInsets.zero,
+                      child: Text('Cancel'),
+                      onPressed: () {
+                        _searchController.clear();
+                        viewModel.searchValue = '';
+                        _searchFocusNode.unfocus();
+                      },
+                    ),
+                  )
+                : SizedBox.shrink(key: ValueKey('noCancelButton')), // Placeholder when not focused
+          ),
+        ],
+      ),
+    );
   }
 
   bool searchCondition(Customer customer) {
@@ -150,6 +218,14 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.removeListener(_onFocusChange);
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget buildFloatingActionButton(BuildContext context) {
     return FloatingActionButton(
       onPressed: () {
@@ -157,7 +233,8 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
           context: context,
           isScrollControlled: true,
           useSafeArea: true,
-          builder: (context) => AddCustomerBottomSheet(onAddCustomer: viewModel.addCustomer),
+          builder: (context) =>
+              AddCustomerBottomSheet(onAddCustomer: viewModel.addCustomer),
         );
       },
       child: const Icon(Icons.person_add_outlined),

@@ -13,6 +13,7 @@ class DbManager = _DbManager with _$DbManager;
 
 abstract class _DbManager with Store {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  bool _hasInitialLoad = false;
 
   _DbManager._internal();
 
@@ -22,15 +23,16 @@ abstract class _DbManager with Store {
   @observable
   List<WorkOrder> workOrders = [];
 
-  // Initialize customers from Firestore owners collection
+  // Fetch customers from Firestore owners collection
   @action
-  Future<void> initCustomers() async {
+  Future<void> fetchCustomers() async {
     try {
       final QuerySnapshot snapshot = await _firestore.collection('owners').get();
       customers = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
         return Customer.fromJson(data);
       }).toList();
+      _hasInitialLoad = true;
     } catch (e) {
       print('Error fetching owners: $e');
       customers = [];
@@ -63,7 +65,9 @@ abstract class _DbManager with Store {
   Future<void> addCustomer(Customer customer) async {
     try {
       await _firestore.collection('owners').add(customer.toJson());
-      customers = [customer, ...customers];
+      final newList = [...customers, customer];
+      newList.sort((a, b) => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()));
+      customers = newList;
     } catch (e) {
       print('Error adding customer: $e');
     }
@@ -137,11 +141,6 @@ abstract class _DbManager with Store {
       
       if (snapshot.docs.isNotEmpty) {
         await snapshot.docs.first.reference.delete();
-        customers = customers.where((c) => c.nationalId != nationalId).toList();
-        // Force a refresh of the customers list if it's empty
-        if (customers.isEmpty) {
-          await initCustomers();
-        }
       }
     } catch (e) {
       print('Error deleting customer: $e');
@@ -204,11 +203,10 @@ abstract class _DbManager with Store {
         await _firestore.collection('owners').doc(customer.ownerId).set(customer.toJson());
       }
       print('Sample owners added successfully');
-      
-      // Refresh the customers list
-      await initCustomers();
     } catch (e) {
       print('Error adding sample owners: $e');
     }
   }
+
+  bool get hasInitialLoad => _hasInitialLoad;
 }

@@ -65,6 +65,22 @@ mixin _$CustomersViewModel on _CustomersViewModel, Store {
     return _$loadCustomersAsyncAction.run(() => super.loadCustomers());
   }
 
+  late final _$refreshCustomersAsyncAction =
+      AsyncAction('_CustomersViewModel.refreshCustomers', context: context);
+
+  @override
+  Future<void> refreshCustomers() {
+    return _$refreshCustomersAsyncAction.run(() => super.refreshCustomers());
+  }
+
+  late final _$addCustomerAsyncAction =
+      AsyncAction('_CustomersViewModel.addCustomer', context: context);
+
+  @override
+  Future<void> addCustomer(Customer customer) {
+    return _$addCustomerAsyncAction.run(() => super.addCustomer(customer));
+  }
+
   late final _$deleteCustomerAsyncAction =
       AsyncAction('_CustomersViewModel.deleteCustomer', context: context);
 

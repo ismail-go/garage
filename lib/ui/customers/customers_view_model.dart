@@ -20,15 +20,36 @@ abstract class _CustomersViewModel extends BaseViewModel with Store {
   @action
   Future<void> loadCustomers() async {
     isLoading = true;
-    await dbManager.initCustomers();
-    customers = ObservableList.of(dbManager.customers);
+    // Only fetch from DB if we haven't done initial load
+    if (!dbManager.hasInitialLoad) {
+      await dbManager.fetchCustomers();
+    }
+    final sortedCustomers = List<Customer>.from(dbManager.customers)
+      ..sort((a, b) => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()));
+    customers = ObservableList.of(sortedCustomers);
+    isLoading = false;
+  }
+
+  @action
+  Future<void> refreshCustomers() async {
+    await dbManager.fetchCustomers();
+    final sortedCustomers = List<Customer>.from(dbManager.customers)
+      ..sort((a, b) => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()));
+    customers = ObservableList.of(sortedCustomers);
+  }
+
+  @action
+  Future<void> addCustomer(Customer customer) async {
+    isLoading = true;
+    await dbManager.addCustomer(customer);
+    await refreshCustomers();
     isLoading = false;
   }
 
   @action
   Future<void> deleteCustomer(String nationalId) async {
     await dbManager.deleteCustomer(nationalId);
-    await loadCustomers(); // Reload the list after deletion
+    await refreshCustomers();
   }
 
   @override
@@ -38,6 +59,6 @@ abstract class _CustomersViewModel extends BaseViewModel with Store {
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    // No need for cleanup
   }
 }

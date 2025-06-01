@@ -11,10 +11,15 @@ import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_sheet.
 import '../customer_detail/customer_detail_view_model.dart';
 
 class CustomersScreen extends StatefulWidget {
-  const CustomersScreen({super.key});
+  final CustomersViewModel viewModel;
+  
+  const CustomersScreen({
+    super.key,
+    required this.viewModel,
+  });
 
   @override
-  State<CustomersScreen> createState() => _CustomersScreenState(CustomersViewModel());
+  State<CustomersScreen> createState() => _CustomersScreenState(viewModel);
 }
 
 class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScreen> {
@@ -44,19 +49,7 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
           ),
           if (viewModel.customers.isEmpty)
             Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('No customers found'),
-                  SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () async {
-                      await dbManager.addSampleOwners();
-                    },
-                    child: Text('Add Sample Data'),
-                  ),
-                ],
-              ),
+              child: Text('No customers found'),
             ),
         ],
       );
@@ -138,5 +131,20 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
         customer.companyName.toLowerCase().contains(searchLower) ||
         customer.phoneNumber.toLowerCase().contains(searchLower) ||
         customer.email.toLowerCase().contains(searchLower);
+  }
+
+  @override
+  Widget buildFloatingActionButton(BuildContext context) {
+    return FloatingActionButton(
+      onPressed: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          useSafeArea: true,
+          builder: (context) => AddCustomerBottomSheet(onAddCustomer: viewModel.addCustomer),
+        );
+      },
+      child: const Icon(Icons.add),
+    );
   }
 }

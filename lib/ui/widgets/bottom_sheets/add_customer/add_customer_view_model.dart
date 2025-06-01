@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:garage/core/base/base_view_model.dart';
-import 'package:garage/data/managers/db_manager.dart';
 import 'package:garage/data/model/customer/customer.dart';
 import 'package:mobx/mobx.dart';
 
@@ -11,6 +10,9 @@ class AddCustomerViewModel = _AddCustomerViewModel with _$AddCustomerViewModel;
 abstract class _AddCustomerViewModel extends BaseViewModel with Store {
   final formKey = GlobalKey<FormState>();
   late final Customer newCustomer;
+  final Future<void> Function(Customer customer) onAddCustomer;
+  
+  _AddCustomerViewModel(this.onAddCustomer);
   
   String address = "";
   String companyName = "";
@@ -32,7 +34,7 @@ abstract class _AddCustomerViewModel extends BaseViewModel with Store {
     // TODO: implement dispose
   }
 
-  void onTapSave(BuildContext context) {
+  Future<void> onTapSave(BuildContext context) async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
       final now = DateTime.now().millisecondsSinceEpoch;
@@ -51,8 +53,8 @@ abstract class _AddCustomerViewModel extends BaseViewModel with Store {
         updatedAt: now,
         vehicles: vehicles,
       );
-      dbManager.addCustomer(newCustomer);
+      await onAddCustomer(newCustomer);
+      Navigator.pop(context); // Close the bottom sheet
     }
-    Navigator.pop(context); // Close the bottom sheet
   }
 }

@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:garage/core/base/base_state.dart';
+import 'package:garage/data/model/customer/customer.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_view_model.dart';
 import 'package:garage/ui/widgets/bottom_sheets/base_bottom_sheet.dart';
 
 class AddCustomerBottomSheet extends StatefulWidget {
-  const AddCustomerBottomSheet({super.key});
+  final Future<void> Function(Customer customer) onAddCustomer;
+  
+  const AddCustomerBottomSheet({
+    super.key,
+    required this.onAddCustomer,
+  });
 
   @override
-  State<AddCustomerBottomSheet> createState() => _AddCustomerBottomSheetState(AddCustomerViewModel());
+  State<AddCustomerBottomSheet> createState() => _AddCustomerBottomSheetState(AddCustomerViewModel(onAddCustomer));
 }
 
 class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCustomerBottomSheet> {
@@ -80,18 +86,12 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
                     viewModel.address = value ?? "";
                   },
                 ),
-                SizedBox(height: 10),
-                _inputField(
-                  label: 'Owner Type',
-                  onSave: (value) {
-                    viewModel.ownerType = value ?? "";
-                  },
-                ),
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () => viewModel.onTapSave(context),
                   child: Text('Save'),
                 ),
+                SizedBox(height: 20),
               ],
             ),
           ),
@@ -102,21 +102,20 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
 
   Widget _inputField({
     required String label,
+    required Function(String?) onSave,
     TextInputType? keyboardType,
     int? maxLines,
-    required Function(String?) onSave
   }) {
     return TextFormField(
-      onSaved: onSave,
-      maxLines: maxLines ?? 1,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
-      textInputAction: TextInputAction.next,
       keyboardType: keyboardType,
+      maxLines: maxLines ?? 1,
+      onSaved: onSave,
     );
   }
 }

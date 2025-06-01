@@ -41,12 +41,12 @@ mixin _$DbManager on _DbManager, Store {
     });
   }
 
-  late final _$initCustomersAsyncAction =
-      AsyncAction('_DbManager.initCustomers', context: context);
+  late final _$fetchCustomersAsyncAction =
+      AsyncAction('_DbManager.fetchCustomers', context: context);
 
   @override
-  Future<void> initCustomers() {
-    return _$initCustomersAsyncAction.run(() => super.initCustomers());
+  Future<void> fetchCustomers() {
+    return _$fetchCustomersAsyncAction.run(() => super.fetchCustomers());
   }
 
   late final _$initWorkOrdersAsyncAction =

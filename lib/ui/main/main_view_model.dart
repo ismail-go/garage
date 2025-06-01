@@ -13,12 +13,10 @@ abstract class _MainViewModel extends BaseViewModel with Store {
   int currentIndex = 0;
 
   @override
-  void init() {
-    // TODO: implement init
-  }
+  void init() {}
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    pageController.dispose();
   }
 }

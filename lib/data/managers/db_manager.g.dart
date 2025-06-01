@@ -77,9 +77,9 @@ mixin _$DbManager on _DbManager, Store {
       AsyncAction('_DbManager.updateCustomer', context: context);
 
   @override
-  Future<void> updateCustomer(String nationalId, Customer customer) {
+  Future<void> updateCustomer(String ownerId, Customer customer) {
     return _$updateCustomerAsyncAction
-        .run(() => super.updateCustomer(nationalId, customer));
+        .run(() => super.updateCustomer(ownerId, customer));
   }
 
   late final _$updateWorkOrderAsyncAction =
@@ -95,9 +95,8 @@ mixin _$DbManager on _DbManager, Store {
       AsyncAction('_DbManager.deleteCustomer', context: context);
 
   @override
-  Future<void> deleteCustomer(String nationalId) {
-    return _$deleteCustomerAsyncAction
-        .run(() => super.deleteCustomer(nationalId));
+  Future<void> deleteCustomer(String ownerId) {
+    return _$deleteCustomerAsyncAction.run(() => super.deleteCustomer(ownerId));
   }
 
   late final _$deleteWorkOrderAsyncAction =

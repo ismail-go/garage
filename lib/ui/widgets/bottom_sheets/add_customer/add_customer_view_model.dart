@@ -8,11 +8,21 @@ part 'add_customer_view_model.g.dart';
 class AddCustomerViewModel = _AddCustomerViewModel with _$AddCustomerViewModel;
 
 abstract class _AddCustomerViewModel extends BaseViewModel with Store {
-  final formKey = GlobalKey<FormState>();
-  late final Customer newCustomer;
   final Future<void> Function(Customer customer) onAddCustomer;
+  final Customer? existingCustomer;
+  final formKey = GlobalKey<FormState>();
   
-  _AddCustomerViewModel(this.onAddCustomer);
+  _AddCustomerViewModel(this.onAddCustomer, this.existingCustomer) {
+    if (existingCustomer != null) {
+      fullName = existingCustomer!.fullName;
+      companyName = existingCustomer!.companyName;
+      email = existingCustomer!.email;
+      phoneNumber = existingCustomer!.phoneNumber;
+      nationalId = existingCustomer!.nationalId;
+      taxId = existingCustomer!.taxId;
+      address = existingCustomer!.address;
+    }
+  }
   
   String address = "";
   String companyName = "";
@@ -35,26 +45,26 @@ abstract class _AddCustomerViewModel extends BaseViewModel with Store {
   }
 
   Future<void> onTapSave(BuildContext context) async {
-    if (formKey.currentState!.validate()) {
-      formKey.currentState!.save();
-      final now = DateTime.now().millisecondsSinceEpoch;
-      newCustomer = Customer(
-        address: address,
-        companyName: companyName,
-        createdAt: now,
-        email: email,
-        fullName: fullName,
-        nationalId: nationalId,
-        ownerId: ownerId,
-        ownerType: ownerType,
-        phoneNumber: phoneNumber,
-        profilePhotoUrl: profilePhotoUrl,
-        taxId: taxId,
-        updatedAt: now,
-        vehicles: vehicles,
-      );
-      await onAddCustomer(newCustomer);
-      Navigator.pop(context); // Close the bottom sheet
-    }
+    formKey.currentState?.save();
+    final now = DateTime.now().millisecondsSinceEpoch;
+    
+    final customer = Customer(
+      ownerId: existingCustomer?.ownerId ?? '',
+      fullName: fullName,
+      companyName: companyName,
+      email: email,
+      phoneNumber: phoneNumber,
+      nationalId: existingCustomer?.nationalId ?? nationalId,
+      taxId: taxId,
+      address: address,
+      createdAt: existingCustomer?.createdAt ?? now,
+      updatedAt: now,
+      ownerType: existingCustomer?.ownerType ?? 'individual',
+      profilePhotoUrl: existingCustomer?.profilePhotoUrl ?? '',
+      vehicles: existingCustomer?.vehicles ?? [],
+    );
+
+    await onAddCustomer(customer);
+    Navigator.pop(context);
   }
 }

@@ -4,6 +4,7 @@ import 'package:garage/data/model/work_order/work_order.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:convert';
 import 'package:garage/data/fake_data.dart';
+import 'package:uuid/uuid.dart';
 
 part 'db_manager.g.dart';
 
@@ -30,8 +31,10 @@ abstract class _DbManager with Store {
       final QuerySnapshot snapshot = await _firestore.collection('owners').get();
       customers = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
+        // No need to add doc.id, it should already be in the data
         return Customer.fromJson(data);
       }).toList();
+      customers.sort((a, b) => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()));
       _hasInitialLoad = true;
     } catch (e) {
       print('Error fetching owners: $e');
@@ -64,7 +67,15 @@ abstract class _DbManager with Store {
   @action
   Future<void> addCustomer(Customer customer) async {
     try {
-      await _firestore.collection('owners').add(customer.toJson());
+      // Generate our own unique ID
+      final String uniqueId = const Uuid().v4();
+      
+      // Update the customer's ownerId
+      customer.ownerId = uniqueId;
+      
+      // Use our ID for the Firestore document
+      await _firestore.collection('owners').doc(uniqueId).set(customer.toJson());
+      
       final newList = [...customers, customer];
       newList.sort((a, b) => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()));
       customers = newList;
@@ -86,21 +97,17 @@ abstract class _DbManager with Store {
 
   // Update a customer in Firestore
   @action
-  Future<void> updateCustomer(String nationalId, Customer customer) async {
+  Future<void> updateCustomer(String ownerId, Customer customer) async {
     try {
-      final QuerySnapshot snapshot = await _firestore
-          .collection('owners')
-          .where('national_id', isEqualTo: nationalId)
-          .get();
+      final docRef = _firestore.collection('owners').doc(ownerId);
+      await docRef.update(customer.toJson());
       
-      if (snapshot.docs.isNotEmpty) {
-        await snapshot.docs.first.reference.update(customer.toJson());
-        final index = customers.indexWhere((c) => c.nationalId == nationalId);
-        if (index != -1) {
-          final List<Customer> updatedList = List.from(customers);
-          updatedList[index] = customer;
-          customers = updatedList;
-        }
+      final index = customers.indexWhere((c) => c.ownerId == ownerId);
+      if (index != -1) {
+        final List<Customer> updatedList = List.from(customers);
+        updatedList[index] = customer;
+        updatedList.sort((a, b) => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()));
+        customers = updatedList;
       }
     } catch (e) {
       print('Error updating customer: $e');
@@ -132,16 +139,10 @@ abstract class _DbManager with Store {
 
   // Delete a customer from Firestore
   @action
-  Future<void> deleteCustomer(String nationalId) async {
+  Future<void> deleteCustomer(String ownerId) async {
     try {
-      final QuerySnapshot snapshot = await _firestore
-          .collection('owners')
-          .where('national_id', isEqualTo: nationalId)
-          .get();
-      
-      if (snapshot.docs.isNotEmpty) {
-        await snapshot.docs.first.reference.delete();
-      }
+      await _firestore.collection('owners').doc(ownerId).delete();
+      customers = customers.where((c) => c.ownerId != ownerId).toList();
     } catch (e) {
       print('Error deleting customer: $e');
     }

@@ -5,43 +5,43 @@ part 'customer.g.dart';
 @JsonSerializable()
 class Customer {
   @JsonKey(name: 'address')
-  final String address;
+  String address;
 
   @JsonKey(name: 'company_name')
-  final String companyName;
+  String companyName;
 
   @JsonKey(name: 'created_at')
-  final int createdAt;
+  int createdAt;
 
   @JsonKey(name: 'email')
-  final String email;
+  String email;
 
   @JsonKey(name: 'full_name')
-  final String fullName;
+  String fullName;
 
   @JsonKey(name: 'national_id')
-  final String nationalId;
+  String nationalId;
 
   @JsonKey(name: 'owner_id')
-  final String ownerId;
+  String ownerId;
 
   @JsonKey(name: 'owner_type')
-  final String ownerType;
+  String ownerType;
 
   @JsonKey(name: 'phone_number')
-  final String phoneNumber;
+  String phoneNumber;
 
   @JsonKey(name: 'profile_photo_url')
-  final String profilePhotoUrl;
+  String profilePhotoUrl;
 
   @JsonKey(name: 'tax_id')
-  final String taxId;
+  String taxId;
 
   @JsonKey(name: 'updated_at')
-  final int updatedAt;
+  int updatedAt;
 
   @JsonKey(name: 'vehicles')
-  final List<String> vehicles;
+  List<String> vehicles;
 
   Customer({
     required this.address,

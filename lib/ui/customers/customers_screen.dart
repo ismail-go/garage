@@ -58,7 +58,7 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
 
   Widget _customerItem(Customer customer) {
     return Dismissible(
-      key: Key(customer.nationalId),
+      key: Key(customer.ownerId),
       background: Container(
         color: Colors.red,
         alignment: Alignment.centerRight,
@@ -67,7 +67,7 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
       ),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) async {
-        await viewModel.deleteCustomer(customer.nationalId);
+        await viewModel.deleteCustomer(customer.ownerId);
       },
       child: Card(
         margin: EdgeInsets.symmetric(vertical: 4),
@@ -79,7 +79,10 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => CustomerDetailScreen(viewModel: CustomerDetailViewModel(customer)),
+                builder: (context) => CustomerDetailScreen(
+                  viewModel: CustomerDetailViewModel(customer),
+                  customersViewModel: viewModel,
+                ),
               ),
             );
           },

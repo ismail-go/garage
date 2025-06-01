@@ -47,8 +47,16 @@ abstract class _CustomersViewModel extends BaseViewModel with Store {
   }
 
   @action
-  Future<void> deleteCustomer(String nationalId) async {
-    await dbManager.deleteCustomer(nationalId);
+  Future<void> updateCustomer(String ownerId, Customer customer) async {
+    isLoading = true;
+    await dbManager.updateCustomer(ownerId, customer);
+    await refreshCustomers();
+    isLoading = false;
+  }
+
+  @action
+  Future<void> deleteCustomer(String ownerId) async {
+    await dbManager.deleteCustomer(ownerId);
     await refreshCustomers();
   }
 

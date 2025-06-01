@@ -81,13 +81,21 @@ mixin _$CustomersViewModel on _CustomersViewModel, Store {
     return _$addCustomerAsyncAction.run(() => super.addCustomer(customer));
   }
 
+  late final _$updateCustomerAsyncAction =
+      AsyncAction('_CustomersViewModel.updateCustomer', context: context);
+
+  @override
+  Future<void> updateCustomer(String ownerId, Customer customer) {
+    return _$updateCustomerAsyncAction
+        .run(() => super.updateCustomer(ownerId, customer));
+  }
+
   late final _$deleteCustomerAsyncAction =
       AsyncAction('_CustomersViewModel.deleteCustomer', context: context);
 
   @override
-  Future<void> deleteCustomer(String nationalId) {
-    return _$deleteCustomerAsyncAction
-        .run(() => super.deleteCustomer(nationalId));
+  Future<void> deleteCustomer(String ownerId) {
+    return _$deleteCustomerAsyncAction.run(() => super.deleteCustomer(ownerId));
   }
 
   @override

@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:garage/core/base/base_state.dart';
+import 'package:garage/data/managers/db_manager.dart';
 import 'package:garage/ui/customer_detail/customer_detail_view_model.dart';
+import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_sheet.dart';
+import 'package:garage/ui/customers/customers_view_model.dart';
 
 class CustomerDetailScreen extends StatefulWidget {
   final CustomerDetailViewModel viewModel;
+  final CustomersViewModel? customersViewModel;
 
-  const CustomerDetailScreen({super.key, required this.viewModel});
+  const CustomerDetailScreen({
+    super.key,
+    required this.viewModel,
+    this.customersViewModel,
+  });
 
   @override
   State<CustomerDetailScreen> createState() => _CustomerDetailScreenState(viewModel);
@@ -19,10 +27,25 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
     return Scaffold(
       appBar: AppBar(
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Icon(Icons.edit),
-          )
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                useSafeArea: true,
+                builder: (context) => AddCustomerBottomSheet(
+                  customer: viewModel.customer,
+                  onAddCustomer: (updatedCustomer) async {
+                    await viewModel.updateCustomer(updatedCustomer);
+                    if (widget.customersViewModel != null) {
+                      await widget.customersViewModel!.refreshCustomers();
+                    }
+                  },
+                ),
+              );
+            },
+          ),
         ],
         title: Text("Customer Details"),
       ),

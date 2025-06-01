@@ -38,6 +38,21 @@ abstract class _CustomerDetailViewModel extends BaseViewModel with Store {
   }
 
   @action
+  void updateVehicleInList(Vehicle updatedVehicle) {
+    final index = vehicles.indexWhere((v) => v.vin == updatedVehicle.vin);
+    if (index != -1) {
+      final List<Vehicle> tempList = List.from(vehicles);
+      tempList[index] = updatedVehicle;
+      tempList.sort((a, b) {
+        int manufacturerCompare = a.manufacturer.compareTo(b.manufacturer);
+        if (manufacturerCompare != 0) return manufacturerCompare;
+        return a.model.compareTo(b.model);
+      });
+      vehicles = tempList;
+    }
+  }
+
+  @action
   Future<void> updateCustomer(Customer updatedCustomer) async {
     final customerToUpdate = Customer(
       ownerId: customer.ownerId,

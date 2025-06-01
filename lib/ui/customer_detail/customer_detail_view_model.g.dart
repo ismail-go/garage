@@ -58,6 +58,20 @@ mixin _$CustomerDetailViewModel on _CustomerDetailViewModel, Store {
         .run(() => super.updateCustomer(updatedCustomer));
   }
 
+  late final _$_CustomerDetailViewModelActionController =
+      ActionController(name: '_CustomerDetailViewModel', context: context);
+
+  @override
+  void updateVehicleInList(Vehicle updatedVehicle) {
+    final _$actionInfo = _$_CustomerDetailViewModelActionController.startAction(
+        name: '_CustomerDetailViewModel.updateVehicleInList');
+    try {
+      return super.updateVehicleInList(updatedVehicle);
+    } finally {
+      _$_CustomerDetailViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
   @override
   String toString() {
     return '''

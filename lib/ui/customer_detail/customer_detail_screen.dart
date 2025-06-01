@@ -7,6 +7,8 @@ import 'package:garage/ui/customer_detail/customer_detail_view_model.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_sheet.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_vehicle/add_vehicle_sheet.dart';
 import 'package:garage/ui/customers/customers_view_model.dart';
+import 'package:garage/ui/vehicle_detail/vehicle_detail_screen.dart';
+import 'package:garage/ui/vehicle_detail/vehicle_detail_view_model.dart';
 
 class CustomerDetailScreen extends StatefulWidget {
   final CustomerDetailViewModel viewModel;
@@ -186,19 +188,35 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
   }
 
   Widget _vehicleListItem(BuildContext context, Vehicle vehicle) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "${vehicle.manufacturer} ${vehicle.model} (${vehicle.year})",
-            style: Theme.of(context).textTheme.titleSmall,
+    return InkWell(
+      onTap: () async {
+        final result = await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VehicleDetailScreen(
+              viewModel: VehicleDetailViewModel(vehicle),
+            ),
           ),
-          Text("Plate: ${vehicle.plateNo}", style: Theme.of(context).textTheme.bodyMedium),
-          Text("VIN: ${vehicle.vin}", style: Theme.of(context).textTheme.bodyMedium),
-          Divider(),
-        ],
+        );
+
+        if (result is Vehicle) {
+          viewModel.updateVehicleInList(result);
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "${vehicle.manufacturer} ${vehicle.model} (${vehicle.year})",
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            Text("Plate: ${vehicle.plateNo}", style: Theme.of(context).textTheme.bodyMedium),
+            Text("VIN: ${vehicle.vin}", style: Theme.of(context).textTheme.bodyMedium),
+            Divider(),
+          ],
+        ),
       ),
     );
   }

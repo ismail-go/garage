@@ -38,6 +38,21 @@ abstract class _CustomerDetailViewModel extends BaseViewModel with Store {
   }
 
   @action
+  Future<bool> deleteVehicleAndWorkOrders(String vin) async {
+    isLoadingVehicles = true;
+    try {
+      await dbManager.deleteVehicle(vin);
+      await fetchVehicles();
+      return true;
+    } catch (e) {
+      print('Error in CDViewModel deleting vehicle $vin: $e');
+      return false;
+    } finally {
+      isLoadingVehicles = false;
+    }
+  }
+
+  @action
   void updateVehicleInList(Vehicle updatedVehicle) {
     final index = vehicles.indexWhere((v) => v.vin == updatedVehicle.vin);
     if (index != -1) {
@@ -50,6 +65,12 @@ abstract class _CustomerDetailViewModel extends BaseViewModel with Store {
       });
       vehicles = tempList;
     }
+  }
+
+  @action
+  void removeVehicleFromListByVin(String vin) {
+    vehicles.removeWhere((v) => v.vin == vin);
+    vehicles = List.from(vehicles);
   }
 
   @action
@@ -71,6 +92,20 @@ abstract class _CustomerDetailViewModel extends BaseViewModel with Store {
     );
     
     await dbManager.updateCustomer(customer.ownerId, customerToUpdate);
+  }
+
+  @action
+  Future<bool> deleteCustomerAndData() async {
+    isLoading = true;
+    try {
+      await dbManager.deleteCustomer(customer.ownerId);
+      return true;
+    } catch (e) {
+      print('Error in ViewModel while deleting customer ${customer.ownerId}: $e');
+      return false;
+    } finally {
+      isLoading = false;
+    }
   }
 
   @override

@@ -9,6 +9,7 @@ import 'package:garage/ui/widgets/bottom_sheets/add_vehicle/add_vehicle_sheet.da
 import 'package:garage/ui/customers/customers_view_model.dart';
 import 'package:garage/ui/vehicle_detail/vehicle_detail_screen.dart';
 import 'package:garage/ui/vehicle_detail/vehicle_detail_view_model.dart';
+import 'package:intl/intl.dart';
 
 class CustomerDetailScreen extends StatefulWidget {
   final CustomerDetailViewModel viewModel;
@@ -29,97 +30,137 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit),
+    return WillPopScope(
+      onWillPop: () async {
+        if (viewModel.isLoading) { 
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Customer data operation in progress. Please wait."),
+              duration: Duration(seconds: 2),
+            ),
+          );
+          return false;
+        }
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          actions: <Widget>[
+            Observer(builder: (_) {
+              if (viewModel.isLoading) {
+                return SizedBox.shrink();
+              }
+              return IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    useSafeArea: true,
+                    builder: (context) => AddCustomerBottomSheet(
+                      customer: viewModel.customer,
+                      onAddCustomer: (updatedCustomer) async {
+                        await viewModel.updateCustomer(updatedCustomer);
+                        if (widget.customersViewModel != null) {
+                          await widget.customersViewModel!.refreshCustomers();
+                        }
+                      },
+                    ),
+                  );
+                },
+              );
+            })
+          ],
+          title: Text("Customer Details"),
+        ),
+        body: Observer(
+          builder: (_) {
+            if (viewModel.isLoading) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 16),
+                    Text("Processing..."),
+                  ],
+                )
+              );
+            }
+            return ListView(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, MediaQuery.of(context).padding.bottom + 16 + 70),
+              children: [
+                Container(
+                  height: 120,
+                  width: 120,
+                  margin: EdgeInsets.only(top: 32, bottom: 20),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey.shade200,
+                    image: viewModel.customer.profilePhotoUrl.isNotEmpty
+                        ? DecorationImage(
+                            image: NetworkImage(viewModel.customer.profilePhotoUrl),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child: viewModel.customer.profilePhotoUrl.isEmpty
+                      ? Icon(Icons.person, size: 80, color: Colors.black38)
+                      : null,
+                ),
+                Text(
+                  viewModel.customer.fullName,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                  textAlign: TextAlign.center,
+                ),
+                if (viewModel.customer.companyName.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Text(
+                      viewModel.customer.companyName,
+                      style: Theme.of(context).textTheme.titleLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    viewModel.customer.phoneNumber,
+                    style: Theme.of(context).textTheme.labelLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                _detailCard(context),
+                _vehiclesCard(context),
+                SizedBox(height: 24),
+                _buildDeleteCustomerButton(context),
+              ],
+            );
+          }
+        ),
+        floatingActionButton: Observer(builder: (_) {
+          if (viewModel.isLoading) {
+            return SizedBox.shrink();
+          }
+          return FloatingActionButton(
             onPressed: () {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
                 useSafeArea: true,
-                builder: (context) => AddCustomerBottomSheet(
-                  customer: viewModel.customer,
-                  onAddCustomer: (updatedCustomer) async {
-                    await viewModel.updateCustomer(updatedCustomer);
-                    if (widget.customersViewModel != null) {
-                      await widget.customersViewModel!.refreshCustomers();
-                    }
+                builder: (context) => AddVehicleBottomSheet(
+                  ownerId: viewModel.customer.ownerId,
+                  onAddVehicle: (newVehicle) async {
+                    await dbManager.addVehicle(newVehicle);
+                    await viewModel.fetchVehicles();
                   },
                 ),
               );
             },
-          ),
-        ],
-        title: Text("Customer Details"),
-      ),
-      body: Observer(
-        builder: (_) => ListView(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, MediaQuery.of(context).padding.bottom + 16),
-          children: [
-            Container(
-              height: 120,
-              width: 120,
-              margin: EdgeInsets.only(top: 32, bottom: 20),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.grey.shade200,
-                image: viewModel.customer.profilePhotoUrl.isNotEmpty
-                    ? DecorationImage(
-                        image: NetworkImage(viewModel.customer.profilePhotoUrl),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-              ),
-              child: viewModel.customer.profilePhotoUrl.isEmpty
-                  ? Icon(Icons.person, size: 80, color: Colors.black38)
-                  : null,
-            ),
-            Text(
-              viewModel.customer.fullName,
-              style: Theme.of(context).textTheme.headlineMedium,
-              textAlign: TextAlign.center,
-            ),
-            if (viewModel.customer.companyName.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  viewModel.customer.companyName,
-                  style: Theme.of(context).textTheme.titleLarge,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                viewModel.customer.phoneNumber,
-                style: Theme.of(context).textTheme.labelLarge,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            _detailCard(context),
-            _vehiclesCard(context),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            useSafeArea: true,
-            builder: (context) => AddVehicleBottomSheet(
-              ownerId: viewModel.customer.ownerId,
-              onAddVehicle: (newVehicle) async {
-                await dbManager.addVehicle(newVehicle);
-                await viewModel.fetchVehicles();
-              },
-            ),
+            child: Icon(Icons.add),
+            tooltip: 'Add Vehicle',
           );
-        },
-        child: Icon(Icons.add),
-        tooltip: 'Add Vehicle',
+        }),
       ),
     );
   }
@@ -146,59 +187,61 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
   }
 
   Widget _vehiclesCard(BuildContext context) {
-    if (viewModel.isLoadingVehicles) {
+    return Observer(builder: (_) {
+      if (viewModel.isLoadingVehicles) {
+        return Card(
+          margin: EdgeInsets.symmetric(vertical: 8),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+        );
+      }
+
+      if (viewModel.vehicles.isEmpty) {
+        return Card(
+          margin: EdgeInsets.symmetric(vertical: 8),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Center(child: Text("No vehicles found for this customer.")),
+          ),
+        );
+      }
+
       return Card(
         margin: EdgeInsets.symmetric(vertical: 8),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      );
-    }
-
-    if (viewModel.vehicles.isEmpty) {
-      return Card(
-        margin: EdgeInsets.symmetric(vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Center(child: Text("No vehicles found for this customer.")),
-        ),
-      );
-    }
-
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 16, 0, 8),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                "Vehicles",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+          padding: const EdgeInsets.fromLTRB(0, 16, 0, 8),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  "Vehicles",
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
               ),
-            ),
-            SizedBox(height: 8),
-            Column(
-              children: viewModel.vehicles.map((vehicle) {
-                final index = viewModel.vehicles.indexOf(vehicle);
-                return Column(
-                  children: [
-                    _vehicleListItem(context, vehicle),
-                    if (index < viewModel.vehicles.length - 1)
-                      Divider(height: 1, indent: 16, endIndent: 16),
-                  ],
-                );
-              }).toList(),
-            ),
-          ],
+              SizedBox(height: 8),
+              Column(
+                children: viewModel.vehicles.map((vehicle) {
+                  final index = viewModel.vehicles.indexOf(vehicle);
+                  return Column(
+                    children: [
+                      _vehicleListItem(context, vehicle),
+                      if (index < viewModel.vehicles.length - 1)
+                        Divider(height: 1, indent: 16, endIndent: 16),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _vehicleListItem(BuildContext context, Vehicle vehicle) {
@@ -241,48 +284,50 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
     }
 
     return InkWell(
-      onTap: () async { 
-        final result = await Navigator.push(
+      onTap: () async {
+        final result = await Navigator.push<dynamic>(
           context,
           MaterialPageRoute(
             builder: (context) => VehicleDetailScreen(
-              viewModel: VehicleDetailViewModel(vehicle), 
+              viewModel: VehicleDetailViewModel(vehicle),
             ),
           ),
         );
 
-        if (result is Vehicle) {
-          viewModel.updateVehicleInList(result); 
+        if (result != null && mounted) {
+          if (result is Vehicle) {
+            viewModel.updateVehicleInList(result);
+          } else if (result is String) {
+            viewModel.removeVehicleFromListByVin(result);
+          }
         }
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0), 
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center, 
           children: [
             leadingWidget,
             SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min, 
                 children: [
                   Text(
-                    "${vehicle.manufacturer} ${vehicle.model}",
+                    '${vehicle.manufacturer} ${vehicle.model}',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-                    overflow: TextOverflow.ellipsis, 
-                  ),
-                  SizedBox(height: 4), 
-                  Text(
-                    "Plate: ${vehicle.plateNo}\nYear: ${vehicle.year}", 
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'Plate: ${vehicle.plateNo} • Year: ${vehicle.year}',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
             ),
-            SizedBox(width: 8), 
             Icon(Icons.chevron_right, color: Colors.grey[600]),
           ],
         ),
@@ -290,25 +335,20 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
     );
   }
 
-  Widget _detailItem(BuildContext context, String label, String value) {
+  Widget _detailItem(BuildContext context, String title, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 100,
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-            ),
-          ),
+          Text(title + ":", style: Theme.of(context).textTheme.labelLarge),
+          SizedBox(width: 16),
           Expanded(
             child: Text(
-              value,
-              style: Theme.of(context).textTheme.bodyMedium,
+              value.isNotEmpty ? value : "N/A",
+              style: Theme.of(context).textTheme.titleSmall,
+              textAlign: TextAlign.end,
             ),
           ),
         ],
@@ -316,8 +356,64 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
     );
   }
 
-  String _formatDate(int timestamp) {
-    final date = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    return "${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}";
+  String _formatDate(int? timestamp) {
+    if (timestamp == null || timestamp == 0) return "N/A";
+    return DateFormat('dd MMMM yyyy, HH:mm').format(DateTime.fromMillisecondsSinceEpoch(timestamp));
+  }
+
+  Widget _buildDeleteCustomerButton(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 8.0),
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          icon: Icon(Icons.delete_forever, color: Colors.white),
+          label: Text('Delete Customer and All Data', style: TextStyle(color: Colors.white)),
+          onPressed: () => _showDeleteConfirmationDialog(context),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red[700],
+            padding: EdgeInsets.symmetric(vertical: 12),
+            textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text('Confirm Deletion'),
+          content: Text(
+              'Are you sure you want to delete this customer (${viewModel.customer.fullName}) and all associated data (vehicles, work orders)? This action cannot be undone.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Delete', style: TextStyle(color: Colors.red)),
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+
+                bool success = await viewModel.deleteCustomerAndData();
+                if (success && mounted) {
+                  Navigator.of(context).pop(true);
+                } else if (!success && mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error deleting customer. Please try again.')),
+                  );
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

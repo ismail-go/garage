@@ -12,6 +12,9 @@ class VehicleDetailViewModel extends _VehicleDetailViewModel with _$VehicleDetai
 abstract class _VehicleDetailViewModel extends BaseViewModel with Store {
   @observable
   Vehicle vehicle;
+  
+  @observable 
+  bool isDeleting = false; // Added for loading state during deletion
 
   _VehicleDetailViewModel(this.vehicle);
 
@@ -27,6 +30,22 @@ abstract class _VehicleDetailViewModel extends BaseViewModel with Store {
       this.vehicle = vehicleToSave; 
     } catch (e) {
       print('Error updating vehicle: $e');
+    }
+    // Ensure no isDeleting=true remains if an update is triggered then a delete
+    if(isDeleting) isDeleting = false;
+  }
+
+  @action
+  Future<bool> deleteThisVehicle() async {
+    isDeleting = true; 
+    try {
+      await dbManager.deleteVehicle(vehicle.vin); // dbManager.deleteVehicle also handles its work orders
+      return true; // Indicate success
+    } catch (e) {
+      print('Error in ViewModel while deleting current vehicle ${vehicle.vin}: $e');
+      return false; // Indicate failure
+    } finally {
+      isDeleting = false; 
     }
   }
 

@@ -145,10 +145,21 @@ abstract class _DbManager with Store {
   @action
   Future<void> deleteCustomer(String ownerId) async {
     try {
+      // 1. Fetch all vehicles for this customer
+      final List<Vehicle> customerVehicles = await fetchCustomerVehicles(ownerId);
+
+      // 2. For each vehicle, delete it (which will also delete its work orders)
+      for (var vehicle in customerVehicles) {
+        await deleteVehicle(vehicle.vin);
+      }
+
+      // 3. Finally, delete the customer (owner) document
       await _firestore.collection('owners').doc(ownerId).delete();
+      
+      // Update local list of customers
       customers = customers.where((c) => c.ownerId != ownerId).toList();
     } catch (e) {
-      print('Error deleting customer: $e');
+      print('Error deleting customer $ownerId and their associated data: $e');
     }
   }
 
@@ -161,12 +172,17 @@ abstract class _DbManager with Store {
           .where('vehicle_id', isEqualTo: vehicleId)
           .get();
       
-      if (snapshot.docs.isNotEmpty) {
-        await snapshot.docs.first.reference.delete();
-        workOrders = workOrders.where((w) => w.vehicleId != vehicleId).toList();
+      // Delete all documents found by the query
+      final WriteBatch batch = _firestore.batch();
+      for (var doc in snapshot.docs) {
+        batch.delete(doc.reference);
       }
+      await batch.commit();
+
+      // Update local list
+      workOrders = workOrders.where((w) => w.vehicleId != vehicleId).toList();
     } catch (e) {
-      print('Error deleting work order: $e');
+      print('Error deleting work order(s) for vehicle $vehicleId: $e');
     }
   }
 
@@ -245,15 +261,46 @@ abstract class _DbManager with Store {
   @action
   Future<void> addVehicle(Vehicle vehicle) async {
     try {
+      // 1. Add the vehicle to the 'vehicles' collection
       await _firestore.collection('vehicles').doc(vehicle.vin).set(vehicle.toJson());
-      vehicles = [...vehicles, vehicle];
-      vehicles.sort((a, b) {
+
+      // 2. Update the owner's document to add this vehicle's VIN to their list
+      if (vehicle.ownerId.isNotEmpty) {
+        final ownerDocRef = _firestore.collection('owners').doc(vehicle.ownerId);
+        await _firestore.runTransaction((transaction) async {
+          final ownerSnapshot = await transaction.get(ownerDocRef);
+          if (!ownerSnapshot.exists) {
+            print("Owner ${vehicle.ownerId} not found when trying to update their vehicle list after adding vehicle ${vehicle.vin}.");
+            // This is a critical issue. If owner doesn't exist, what should happen?
+            // For now, we'll log and the vehicle will be orphaned from an owner's list perspective.
+            // Consider throwing an error or specific handling.
+            return; 
+          }
+          final List<String> ownerVehicles = List<String>.from((ownerSnapshot.data() as Map<String, dynamic>)['vehicles'] ?? []);
+          if (!ownerVehicles.contains(vehicle.vin)) {
+            ownerVehicles.add(vehicle.vin);
+            transaction.update(ownerDocRef, {'vehicles': ownerVehicles});
+            print("Added vehicle ${vehicle.vin} to owner ${vehicle.ownerId}'s list.");
+          }
+        });
+      }
+
+      // 3. Update local list (if this DbManager instance holds a global list)
+      // This local `vehicles` list in DbManager might not be the one CustomerDetailScreen uses directly.
+      // CustomerDetailScreen fetches its own list via fetchCustomerVehicles.
+      // However, if other parts of the app use dbManager.vehicles, update it.
+      final newList = [...vehicles, vehicle];
+      newList.sort((a, b) { // Keep consistent sorting if any
         int manufacturerCompare = a.manufacturer.compareTo(b.manufacturer);
         if (manufacturerCompare != 0) return manufacturerCompare;
         return a.model.compareTo(b.model);
       });
+      vehicles = newList;
+      print('Vehicle ${vehicle.vin} added successfully and owner updated.');
+
     } catch (e) {
-      print('Error adding vehicle: $e');
+      print('Error adding vehicle ${vehicle.vin}: $e');
+      // Potentially re-throw or handle more gracefully
     }
   }
 
@@ -281,11 +328,47 @@ abstract class _DbManager with Store {
   // Delete a vehicle
   @action
   Future<void> deleteVehicle(String vin) async {
+    DocumentSnapshot? vehicleDocSnapshot;
     try {
+      // 0. Get the vehicle document to find its ownerId
+      vehicleDocSnapshot = await _firestore.collection('vehicles').doc(vin).get();
+      if (!vehicleDocSnapshot.exists) {
+        print('Vehicle $vin not found for deletion.');
+        return;
+      }
+      final vehicleData = vehicleDocSnapshot.data() as Map<String, dynamic>;
+      final String ownerId = vehicleData['owner_id'];
+
+      // 1. Delete all work orders associated with this vehicle
+      await deleteWorkOrder(vin); 
+
+      // 2. Delete the vehicle itself
       await _firestore.collection('vehicles').doc(vin).delete();
+      
+      // 3. Update the owner's document to remove this vehicle's VIN from their list
+      if (ownerId.isNotEmpty) {
+        final ownerDocRef = _firestore.collection('owners').doc(ownerId);
+        await _firestore.runTransaction((transaction) async {
+          final ownerSnapshot = await transaction.get(ownerDocRef);
+          if (!ownerSnapshot.exists) {
+            print("Owner $ownerId not found when trying to update their vehicle list after deleting vehicle $vin.");
+            return; // Or throw an error
+          }
+          final List<String> ownerVehicles = List<String>.from((ownerSnapshot.data() as Map<String, dynamic>)['vehicles'] ?? []);
+          if (ownerVehicles.contains(vin)) {
+            ownerVehicles.remove(vin);
+            transaction.update(ownerDocRef, {'vehicles': ownerVehicles});
+            print("Removed vehicle $vin from owner $ownerId's list.");
+          }
+        });
+      }
+
+      // 4. Update local list of vehicles (if this DbManager instance holds a global list)
       vehicles = vehicles.where((v) => v.vin != vin).toList();
+      print('Vehicle $vin and its work orders deleted successfully, and owner updated.');
     } catch (e) {
-      print('Error deleting vehicle: $e');
+      print('Error deleting vehicle $vin: $e');
+      // Potentially re-throw or handle more gracefully
     }
   }
 

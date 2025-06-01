@@ -25,6 +25,22 @@ mixin _$VehicleDetailViewModel on _VehicleDetailViewModel, Store {
     });
   }
 
+  late final _$isDeletingAtom =
+      Atom(name: '_VehicleDetailViewModel.isDeleting', context: context);
+
+  @override
+  bool get isDeleting {
+    _$isDeletingAtom.reportRead();
+    return super.isDeleting;
+  }
+
+  @override
+  set isDeleting(bool value) {
+    _$isDeletingAtom.reportWrite(value, super.isDeleting, () {
+      super.isDeleting = value;
+    });
+  }
+
   late final _$updateVehicleAsyncAction =
       AsyncAction('_VehicleDetailViewModel.updateVehicle', context: context);
 
@@ -34,10 +50,20 @@ mixin _$VehicleDetailViewModel on _VehicleDetailViewModel, Store {
         .run(() => super.updateVehicle(updatedVehicle));
   }
 
+  late final _$deleteThisVehicleAsyncAction = AsyncAction(
+      '_VehicleDetailViewModel.deleteThisVehicle',
+      context: context);
+
+  @override
+  Future<bool> deleteThisVehicle() {
+    return _$deleteThisVehicleAsyncAction.run(() => super.deleteThisVehicle());
+  }
+
   @override
   String toString() {
     return '''
-vehicle: ${vehicle}
+vehicle: ${vehicle},
+isDeleting: ${isDeleting}
     ''';
   }
 }

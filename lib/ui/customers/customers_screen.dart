@@ -47,7 +47,7 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
           });
         },
           ),
-          if (viewModel.customers.isEmpty)
+          if (viewModel.customers.isEmpty && viewModel.searchValue.isEmpty)
             Center(
               child: Text('No customers found'),
             ),
@@ -57,26 +57,14 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
   }
 
   Widget _customerItem(Customer customer) {
-    return Dismissible(
-      key: Key(customer.ownerId),
-      background: Container(
-        color: Colors.red,
-        alignment: Alignment.centerRight,
-        padding: EdgeInsets.only(right: 16),
-        child: Icon(Icons.delete, color: Colors.white),
-      ),
-      direction: DismissDirection.endToStart,
-      onDismissed: (direction) async {
-        await viewModel.deleteCustomer(customer.ownerId);
-      },
-      child: Card(
+    return Card(
       margin: EdgeInsets.symmetric(vertical: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
       color: Colors.grey.shade200,
       shadowColor: Colors.transparent,
       child: ListTile(
-        onTap: () {
-          Navigator.push(
+        onTap: () async {
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => CustomerDetailScreen(
@@ -85,6 +73,9 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
                 ),
             ),
           );
+          if (result == true) {
+            viewModel.refreshCustomers();
+          }
         },
           leading: CircleAvatar(
             backgroundColor: Colors.grey.shade300,
@@ -106,8 +97,7 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
           ),
         trailing: Icon(Icons.chevron_right),
         ),
-      ),
-    );
+      );
   }
 
   Padding _searchBar() {

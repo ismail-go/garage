@@ -49,6 +49,16 @@ mixin _$CustomerDetailViewModel on _CustomerDetailViewModel, Store {
     return _$fetchVehiclesAsyncAction.run(() => super.fetchVehicles());
   }
 
+  late final _$deleteVehicleAndWorkOrdersAsyncAction = AsyncAction(
+      '_CustomerDetailViewModel.deleteVehicleAndWorkOrders',
+      context: context);
+
+  @override
+  Future<bool> deleteVehicleAndWorkOrders(String vin) {
+    return _$deleteVehicleAndWorkOrdersAsyncAction
+        .run(() => super.deleteVehicleAndWorkOrders(vin));
+  }
+
   late final _$updateCustomerAsyncAction =
       AsyncAction('_CustomerDetailViewModel.updateCustomer', context: context);
 
@@ -56,6 +66,16 @@ mixin _$CustomerDetailViewModel on _CustomerDetailViewModel, Store {
   Future<void> updateCustomer(Customer updatedCustomer) {
     return _$updateCustomerAsyncAction
         .run(() => super.updateCustomer(updatedCustomer));
+  }
+
+  late final _$deleteCustomerAndDataAsyncAction = AsyncAction(
+      '_CustomerDetailViewModel.deleteCustomerAndData',
+      context: context);
+
+  @override
+  Future<bool> deleteCustomerAndData() {
+    return _$deleteCustomerAndDataAsyncAction
+        .run(() => super.deleteCustomerAndData());
   }
 
   late final _$_CustomerDetailViewModelActionController =
@@ -67,6 +87,17 @@ mixin _$CustomerDetailViewModel on _CustomerDetailViewModel, Store {
         name: '_CustomerDetailViewModel.updateVehicleInList');
     try {
       return super.updateVehicleInList(updatedVehicle);
+    } finally {
+      _$_CustomerDetailViewModelActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
+  void removeVehicleFromListByVin(String vin) {
+    final _$actionInfo = _$_CustomerDetailViewModelActionController.startAction(
+        name: '_CustomerDetailViewModel.removeVehicleFromListByVin');
+    try {
+      return super.removeVehicleFromListByVin(vin);
     } finally {
       _$_CustomerDetailViewModelActionController.endAction(_$actionInfo);
     }

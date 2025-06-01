@@ -56,7 +56,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
       ),
       body: Observer(
         builder: (_) => ListView(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: EdgeInsets.fromLTRB(16, 0, 16, MediaQuery.of(context).padding.bottom + 16),
           children: [
             Container(
               height: 120,
@@ -169,18 +169,32 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
     return Card(
       margin: EdgeInsets.symmetric(vertical: 8),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(0, 16, 0, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Vehicles",
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                "Vehicles",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
             ),
             SizedBox(height: 8),
-            ...viewModel.vehicles.map((vehicle) => _vehicleListItem(context, vehicle)),
+            Column(
+              children: viewModel.vehicles.map((vehicle) {
+                final index = viewModel.vehicles.indexOf(vehicle);
+                return Column(
+                  children: [
+                    _vehicleListItem(context, vehicle),
+                    if (index < viewModel.vehicles.length - 1)
+                      Divider(height: 1, indent: 16, endIndent: 16),
+                  ],
+                );
+              }).toList(),
+            ),
           ],
         ),
       ),
@@ -188,33 +202,88 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
   }
 
   Widget _vehicleListItem(BuildContext context, Vehicle vehicle) {
+    Widget leadingWidget;
+    if (vehicle.imageUrl.isNotEmpty) {
+      leadingWidget = SizedBox(
+        width: 48,
+        height: 48,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(4.0),
+          child: Image.network(
+            vehicle.imageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                color: Colors.grey[200],
+                child: Icon(Icons.directions_car, color: Theme.of(context).primaryColor, size: 30),
+              );
+            },
+            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.0,
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              );
+            }, 
+          ),
+        ),
+      );
+    } else {
+      leadingWidget = SizedBox(
+        width: 48,
+        height: 48,
+        child: Icon(Icons.directions_car, color: Theme.of(context).primaryColor, size: 36),
+      );
+    }
+
     return InkWell(
-      onTap: () async {
+      onTap: () async { 
         final result = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => VehicleDetailScreen(
-              viewModel: VehicleDetailViewModel(vehicle),
+              viewModel: VehicleDetailViewModel(vehicle), 
             ),
           ),
         );
 
         if (result is Vehicle) {
-          viewModel.updateVehicleInList(result);
+          viewModel.updateVehicleInList(result); 
         }
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0), 
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center, 
           children: [
-            Text(
-              "${vehicle.manufacturer} ${vehicle.model} (${vehicle.year})",
-              style: Theme.of(context).textTheme.titleSmall,
+            leadingWidget,
+            SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min, 
+                children: [
+                  Text(
+                    "${vehicle.manufacturer} ${vehicle.model}",
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+                    overflow: TextOverflow.ellipsis, 
+                  ),
+                  SizedBox(height: 4), 
+                  Text(
+                    "Plate: ${vehicle.plateNo}\nYear: ${vehicle.year}", 
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                ],
+              ),
             ),
-            Text("Plate: ${vehicle.plateNo}", style: Theme.of(context).textTheme.bodyMedium),
-            Text("VIN: ${vehicle.vin}", style: Theme.of(context).textTheme.bodyMedium),
-            Divider(),
+            SizedBox(width: 8), 
+            Icon(Icons.chevron_right, color: Colors.grey[600]),
           ],
         ),
       ),

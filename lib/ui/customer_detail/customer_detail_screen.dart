@@ -35,159 +35,137 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
       appBar: BlurredAppBar(
         leading: BackButton(color: Colors.white),
         actions: <Widget>[
-          Observer(
-            builder: (_) {
-              if (viewModel.isCustomerLoading) {
-                return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
-                  );
-              }
-              if (viewModel.customer == null) {
-                return IconButton(icon: Icon(Icons.edit_off, color: Colors.white), onPressed: null);
-              }
-              if (viewModel.isLoading && !viewModel.isProcessingCustomerDeletion) { 
-                 return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
-                  );
-              }
-              return IconButton(
-                icon: Icon(Icons.edit, color: Colors.white),
-                onPressed: () {
-                  if (viewModel.customer != null) {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      useSafeArea: true,
-                      builder: (context) => AddCustomerBottomSheet(
-                        customer: viewModel.customer!,
-                        onAddCustomer: (updatedCustomer) async {
-                          await viewModel.updateCustomer(updatedCustomer);
-                        },
-                      ),
-                    );
-                  }
-                },
+          Observer(builder: (_) {
+            if (viewModel.isCustomerLoading) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
               );
             }
-          )
-        ],
-        title: Observer(
-          builder: (_) {
-            if (viewModel.customer != null && viewModel.customer!.fullName.isNotEmpty) {
-              return Text(viewModel.customer!.fullName);
+            if (viewModel.customer == null) {
+              return IconButton(icon: Icon(Icons.edit_off, color: Colors.white), onPressed: null);
             }
-            return Text("Customer Details");
+            if (viewModel.isLoading && !viewModel.isProcessingCustomerDeletion) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
+              );
+            }
+            return IconButton(
+              icon: Icon(Icons.edit, color: Colors.white),
+              onPressed: () {
+                if (viewModel.customer != null) {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    useSafeArea: true,
+                    builder: (context) => AddCustomerBottomSheet(
+                      customer: viewModel.customer!,
+                      onAddCustomer: (updatedCustomer) async {
+                        await viewModel.updateCustomer(updatedCustomer);
+                      },
+                    ),
+                  );
+                }
+              },
+            );
+          })
+        ],
+        title: Observer(builder: (_) {
+          if (viewModel.customer != null && viewModel.customer!.fullName.isNotEmpty) {
+            return Text(viewModel.customer!.fullName);
           }
-        ),
+          return Text("Customer Details");
+        }),
       ),
-      body: Observer(
-        builder: (_) {
-          if (viewModel.isCustomerLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (viewModel.customerLoadingError != null) {
-            return Center(child: Text("Error: ${viewModel.customerLoadingError}"));
-          }
-          if (viewModel.customer == null) {
-            return Center(
+      body: Observer(builder: (_) {
+        if (viewModel.isCustomerLoading) {
+          return Center(child: CircularProgressIndicator());
+        }
+        if (viewModel.customerLoadingError != null) {
+          return Center(child: Text("Error: ${viewModel.customerLoadingError}"));
+        }
+        if (viewModel.customer == null) {
+          return Center(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Customer not found or has been deleted."),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () => Navigator.of(context).pop(), 
-                    child: Text("Go Back")
-                  )
-                ],
-              )
-            );
-          }
-
-          if (viewModel.isProcessingCustomerDeletion) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text("Deleting Customer..."),
-                ],
-              )
-            );
-          }
-          
-          return ListView(
-            padding: EdgeInsets.fromLTRB(
-                16, 
-                kToolbarHeight + MediaQuery.of(context).padding.top,
-                16, 
-                MediaQuery.of(context).padding.bottom + 16 + 70
-            ),
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Observer(builder: (_) {
-                final customer = viewModel.customer!;
-                return Column(
-                  children: [
-                    Container(
-                      height: 120,
-                      width: 120,
-                      margin: EdgeInsets.only(top: 32, bottom: 20),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.shade200,
-                        image: customer.profilePhotoUrl.isNotEmpty
-                            ? DecorationImage(
-                                image: NetworkImage(customer.profilePhotoUrl),
-                                fit: BoxFit.cover,
-                              )
-                            : null,
-                      ),
-                      child: customer.profilePhotoUrl.isEmpty
-                          ? Icon(Icons.person, size: 80, color: Colors.black38)
+              Text("Customer not found or has been deleted."),
+              SizedBox(height: 10),
+              ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: Text("Go Back"))
+            ],
+          ));
+        }
+
+        if (viewModel.isProcessingCustomerDeletion) {
+          return Center(
+              child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text("Deleting Customer..."),
+            ],
+          ));
+        }
+
+        return ListView(
+          padding: EdgeInsets.fromLTRB(16, kToolbarHeight + MediaQuery.of(context).padding.top, 16, MediaQuery.of(context).padding.bottom + 16 + 70),
+          children: [
+            Observer(builder: (_) {
+              final customer = viewModel.customer!;
+              return Column(
+                children: [
+                  Container(
+                    height: 120,
+                    width: 120,
+                    margin: EdgeInsets.only(top: 32, bottom: 20),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey.shade200,
+                      image: customer.profilePhotoUrl.isNotEmpty
+                          ? DecorationImage(
+                              image: NetworkImage(customer.profilePhotoUrl),
+                              fit: BoxFit.cover,
+                            )
                           : null,
                     ),
-                    Text(
-                      customer.fullName,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                      textAlign: TextAlign.center,
-                    ),
-                    if (customer.companyName.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: Text(
-                          customer.companyName,
-                          style: Theme.of(context).textTheme.titleLarge,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
+                    child: customer.profilePhotoUrl.isEmpty ? Icon(Icons.person, size: 80, color: Colors.black38) : null,
+                  ),
+                  Text(
+                    customer.fullName,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  if (customer.companyName.isNotEmpty)
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                      child: Text(
-                        customer.phoneNumber,
-                        style: Theme.of(context).textTheme.labelLarge,
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: SelectableText(
+                        customer.companyName,
+                        style: Theme.of(context).textTheme.titleLarge,
                         textAlign: TextAlign.center,
                       ),
                     ),
-                  ],
-                );
-              }),
-              
-              Observer(builder: (_) {
-                return _detailCard(context, viewModel.customer!); 
-              }),
-              
-              _vehiclesCard(context), 
-              
-              SizedBox(height: 24),
-              
-              _buildDeleteCustomerButton(context, viewModel.customer!), 
-            ],
-          );
-        }
-      ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: SelectableText(
+                      customer.phoneNumber,
+                      style: Theme.of(context).textTheme.labelLarge,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              );
+            }),
+            Observer(builder: (_) {
+              return _detailCard(context, viewModel.customer!);
+            }),
+            _vehiclesCard(context),
+            SizedBox(height: 24),
+            _buildDeleteCustomerButton(context, viewModel.customer!),
+          ],
+        );
+      }),
       floatingActionButton: Observer(builder: (_) {
         if (viewModel.isCustomerLoading || viewModel.customer == null || viewModel.isLoading) {
           return SizedBox.shrink();
@@ -291,8 +269,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
                     return Column(
                       children: [
                         _vehicleListItem(context, vehicle),
-                        if (index < vehicles.length - 1)
-                          Divider(height: 1, indent: 16, endIndent: 16),
+                        if (index < vehicles.length - 1) Divider(height: 1, indent: 16, endIndent: 16),
                       ],
                     );
                   }).toList(),
@@ -327,12 +304,10 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
               return Center(
                 child: CircularProgressIndicator(
                   strokeWidth: 2.0,
-                  value: loadingProgress.expectedTotalBytes != null
-                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                      : null,
+                  value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes! : null,
                 ),
               );
-            }, 
+            },
           ),
         ),
       );
@@ -398,7 +373,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
           Text(title + ":", style: Theme.of(context).textTheme.labelLarge),
           SizedBox(width: 16),
           Expanded(
-            child: Text(
+            child: SelectableText(
               value.isNotEmpty ? value : "N/A",
               style: Theme.of(context).textTheme.titleSmall,
               textAlign: TextAlign.end,
@@ -452,7 +427,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
             TextButton(
               child: Text('Delete', style: TextStyle(color: Colors.red)),
               onPressed: () async {
-                Navigator.of(dialogContext).pop(); 
+                Navigator.of(dialogContext).pop();
 
                 bool success = await viewModel.deleteCustomerAndData();
                 if (success && mounted) {

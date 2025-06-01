@@ -112,17 +112,17 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
                         child: Icon(Icons.directions_car, size: 80, color: Colors.grey[700]),
                       ),
                     SizedBox(height: 16),
-                    Text(
+                    SelectableText(
                       '${vehicle.manufacturer} ${vehicle.model}',
                       style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
                       textAlign: TextAlign.center,
                     ),
-                    Text(
+                    SelectableText(
                       'Year: ${vehicle.year}',
                       style: Theme.of(context).textTheme.titleMedium,
                       textAlign: TextAlign.center,
                     ),
-                    Text(
+                    SelectableText(
                       'Plate: ${vehicle.plateNo}',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic),
                       textAlign: TextAlign.center,
@@ -220,7 +220,7 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(label, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-          Flexible(child: Text(value, style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.end)),
+          Flexible(child: SelectableText(value, style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.end)),
         ],
       ),
     );

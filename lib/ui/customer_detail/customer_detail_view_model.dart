@@ -1,3 +1,4 @@
+import 'dart:async'; // For StreamSubscription
 import 'package:flutter/material.dart';
 import 'package:garage/core/base/base_view_model.dart';
 import 'package:mobx/mobx.dart';
@@ -7,114 +8,106 @@ import '../../data/model/vehicle/vehicle.dart';
 
 part 'customer_detail_view_model.g.dart';
 
-class CustomerDetailViewModel extends _CustomerDetailViewModel with _$CustomerDetailViewModel {
-  CustomerDetailViewModel(Customer customer) : super(customer);
-}
+class CustomerDetailViewModel = _CustomerDetailViewModel with _$CustomerDetailViewModel;
 
 abstract class _CustomerDetailViewModel extends BaseViewModel with Store {
-  final Customer customer;
-
-  _CustomerDetailViewModel(this.customer) {
-    init();
-  }
+  final String ownerId;
 
   @observable
-  List<Vehicle> vehicles = [];
+  Customer? customer;
 
   @observable
-  bool isLoadingVehicles = false;
+  bool isCustomerLoading = true;
 
-  @action
-  Future<void> fetchVehicles() async {
-    isLoadingVehicles = true;
-    try {
-      vehicles = await dbManager.fetchCustomerVehicles(customer.ownerId);
-    } catch (e) {
-      print("Error fetching vehicles: $e");
-      vehicles = [];
-    } finally {
-      isLoadingVehicles = false;
-    }
+  @observable
+  String? customerLoadingError;
+
+  @observable
+  bool isLoading = false; // For general actions like update/delete
+
+  late final Stream<List<Vehicle>> vehicleStream;
+  StreamSubscription? _customerSubscription;
+
+  _CustomerDetailViewModel(this.ownerId) {
+    vehicleStream = dbManager.streamCustomerVehicles(ownerId);
+    _listenToCustomer();
+    init(); // Call existing init if it has other logic
   }
 
-  @action
-  Future<bool> deleteVehicleAndWorkOrders(String vin) async {
-    isLoadingVehicles = true;
-    try {
-      await dbManager.deleteVehicle(vin);
-      await fetchVehicles();
-      return true;
-    } catch (e) {
-      print('Error in CDViewModel deleting vehicle $vin: $e');
-      return false;
-    } finally {
-      isLoadingVehicles = false;
-    }
-  }
-
-  @action
-  void updateVehicleInList(Vehicle updatedVehicle) {
-    final index = vehicles.indexWhere((v) => v.vin == updatedVehicle.vin);
-    if (index != -1) {
-      final List<Vehicle> tempList = List.from(vehicles);
-      tempList[index] = updatedVehicle;
-      tempList.sort((a, b) {
-        int manufacturerCompare = a.manufacturer.compareTo(b.manufacturer);
-        if (manufacturerCompare != 0) return manufacturerCompare;
-        return a.model.compareTo(b.model);
-      });
-      vehicles = tempList;
-    }
-  }
-
-  @action
-  void removeVehicleFromListByVin(String vin) {
-    vehicles.removeWhere((v) => v.vin == vin);
-    vehicles = List.from(vehicles);
-  }
-
-  @action
-  Future<void> updateCustomer(Customer updatedCustomer) async {
-    final customerToUpdate = Customer(
-      ownerId: customer.ownerId,
-      fullName: updatedCustomer.fullName,
-      companyName: updatedCustomer.companyName,
-      email: updatedCustomer.email,
-      phoneNumber: updatedCustomer.phoneNumber,
-      nationalId: updatedCustomer.nationalId,
-      taxId: updatedCustomer.taxId,
-      address: updatedCustomer.address,
-      createdAt: customer.createdAt,
-      updatedAt: DateTime.now().millisecondsSinceEpoch,
-      ownerType: customer.ownerType,
-      profilePhotoUrl: customer.profilePhotoUrl,
-      vehicles: customer.vehicles,
+  void _listenToCustomer() {
+    isCustomerLoading = true;
+    customerLoadingError = null;
+    _customerSubscription = dbManager.streamCustomer(ownerId).listen(
+      (customerData) {
+        this.customer = customerData;
+        isCustomerLoading = false;
+      },
+      onError: (error) {
+        print("Error listening to customer $ownerId: $error");
+        customerLoadingError = error.toString();
+        isCustomerLoading = false;
+      },
+      onDone: () {
+        isCustomerLoading = false;
+        // If stream closes and customer is null, it means not found or deleted.
+        if (this.customer == null) {
+          print("Customer stream for $ownerId done, customer not found.");
+        }
+      }
     );
-    
-    await dbManager.updateCustomer(customer.ownerId, customerToUpdate);
   }
 
+  @observable
+  bool _isDeletingCustomer = false;
+
+  // Getter for UI to observe deletion state, e.g. for showing a loading indicator
+  // This combines the general isLoading with the specific customer deletion flag
+  @computed
+  bool get isProcessingCustomerDeletion => isLoading && _isDeletingCustomer;
+
   @action
-  Future<bool> deleteCustomerAndData() async {
+  Future<void> updateCustomer(Customer customerToUpdate) async {
     isLoading = true;
     try {
-      await dbManager.deleteCustomer(customer.ownerId);
-      return true;
+      final updatedCustomerData = customerToUpdate.copyWith(
+        ownerId: this.ownerId,
+        updatedAt: DateTime.now().millisecondsSinceEpoch,
+      );
+      await dbManager.updateCustomer(this.ownerId, updatedCustomerData);
+      // The stream listener will automatically update `this.customer`
     } catch (e) {
-      print('Error in ViewModel while deleting customer ${customer.ownerId}: $e');
-      return false;
+      print("Error updating customer in ViewModel: $e");
+      // Potentially set a user-facing error message
     } finally {
       isLoading = false;
     }
   }
 
+  @action
+  Future<bool> deleteCustomerAndData() async {
+    isLoading = true;
+    _isDeletingCustomer = true;
+    try {
+      await dbManager.deleteCustomer(ownerId);
+      // `this.customer` will become null via the stream listener if successful
+      return true;
+    } catch (e) {
+      print("Error deleting customer and data for $ownerId: $e");
+      return false;
+    } finally {
+      isLoading = false;
+      _isDeletingCustomer = false;
+    }
+  }
+
   @override
   void init() {
-    fetchVehicles();
+    // BaseViewModel init logic can go here if any
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    _customerSubscription?.cancel();
+    // super.dispose(); // Removed as dispose might be abstract in BaseViewModel
   }
 }

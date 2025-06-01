@@ -62,4 +62,36 @@ class Customer {
   factory Customer.fromJson(Map<String, dynamic> json) => _$CustomerFromJson(json);
 
   Map<String, dynamic> toJson() => _$CustomerToJson(this);
+
+  Customer copyWith({
+    String? address,
+    String? companyName,
+    int? createdAt,
+    String? email,
+    String? fullName,
+    String? nationalId,
+    String? ownerId,
+    String? ownerType,
+    String? phoneNumber,
+    String? profilePhotoUrl,
+    String? taxId,
+    int? updatedAt,
+    List<String>? vehicles,
+  }) {
+    return Customer(
+      address: address ?? this.address,
+      companyName: companyName ?? this.companyName,
+      createdAt: createdAt ?? this.createdAt,
+      email: email ?? this.email,
+      fullName: fullName ?? this.fullName,
+      nationalId: nationalId ?? this.nationalId,
+      ownerId: ownerId ?? this.ownerId,
+      ownerType: ownerType ?? this.ownerType,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      profilePhotoUrl: profilePhotoUrl ?? this.profilePhotoUrl,
+      taxId: taxId ?? this.taxId,
+      updatedAt: updatedAt ?? this.updatedAt,
+      vehicles: vehicles ?? this.vehicles,
+    );
+  }
 }

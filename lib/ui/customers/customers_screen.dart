@@ -27,33 +27,53 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
 
   @override
   Widget build(BuildContext context) {
-    return Observer(builder: (context) {
-      if (viewModel.isLoading) {
-        return Center(child: CircularProgressIndicator());
-      }
-      
-      return Stack(
-        children: [
-          ListView.builder(
-        padding: EdgeInsets.all(16).add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, top: MediaQuery.of(context).padding.top)),
-        itemCount: viewModel.customers.length + 1,
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return _searchBar();
+    return StreamBuilder<List<Customer>>(
+      stream: viewModel.customerStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          if (!snapshot.hasData) {
+             return Center(child: CircularProgressIndicator());
           }
-          final customer = viewModel.customers[index - 1];
-          return Observer(builder: (context) {
-            return searchCondition(customer) ? _customerItem(customer) : SizedBox.shrink();
-          });
-        },
-          ),
-          if (viewModel.customers.isEmpty && viewModel.searchValue.isEmpty)
-            Center(
-              child: Text('No customers found'),
+        }
+
+        if (snapshot.hasError) {
+          print("Error in customer stream: ${snapshot.error}");
+          return Center(child: Text("Error loading customers. Please try again."));
+        }
+
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return Stack(
+            children: [
+              _searchBar(),
+              Center(child: Text('No customers found')),
+            ],
+          );
+        }
+
+        final allCustomers = snapshot.data!;
+        final filteredCustomers = allCustomers.where((customer) => searchCondition(customer)).toList();
+
+        return Stack(
+          children: [
+            ListView.builder(
+              padding: EdgeInsets.all(16).add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, top: MediaQuery.of(context).padding.top)),
+              itemCount: filteredCustomers.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return _searchBar();
+                }
+                final customer = filteredCustomers[index - 1];
+                return _customerItem(customer);
+              },
             ),
-        ],
-      );
-    });
+            if (allCustomers.isNotEmpty && filteredCustomers.isEmpty && viewModel.searchValue.isNotEmpty) 
+              Center(
+                 child: Text('No customers match your search.')
+              ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _customerItem(Customer customer) {
@@ -64,58 +84,61 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
       shadowColor: Colors.transparent,
       child: ListTile(
         onTap: () async {
-          final result = await Navigator.push(
+          final customerDetailViewModel = CustomerDetailViewModel(
+            customer.ownerId,
+          );
+
+          Navigator.push(
             context,
-            MaterialPageRoute(
+            CupertinoPageRoute(
                 builder: (context) => CustomerDetailScreen(
-                  viewModel: CustomerDetailViewModel(customer),
-                  customersViewModel: viewModel,
+                  viewModel: customerDetailViewModel,
                 ),
             ),
           );
-          if (result == true) {
-            viewModel.refreshCustomers();
-          }
         },
-          leading: CircleAvatar(
-            backgroundColor: Colors.grey.shade300,
-            backgroundImage: customer.profilePhotoUrl.isNotEmpty
-                ? NetworkImage(customer.profilePhotoUrl)
-                : null,
-            child: customer.profilePhotoUrl.isEmpty
-                ? Icon(Icons.person, color: Colors.black38)
-                : null,
-          ),
-          title: Text(customer.fullName),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (customer.companyName.isNotEmpty)
-                Text(customer.companyName),
-              Text(customer.phoneNumber),
-            ],
-          ),
-        trailing: Icon(Icons.chevron_right),
+        leading: CircleAvatar(
+          backgroundColor: Colors.grey.shade300,
+          backgroundImage: customer.profilePhotoUrl.isNotEmpty
+              ? NetworkImage(customer.profilePhotoUrl)
+              : null,
+          child: customer.profilePhotoUrl.isEmpty
+              ? Icon(Icons.person, color: Colors.black38)
+              : null,
         ),
-      );
-  }
-
-  Padding _searchBar() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8.0),
-      child: CupertinoSearchTextField(
-        borderRadius: BorderRadius.circular(12),
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-        prefixInsets: EdgeInsets.only(left: 12),
-        suffixInsets: EdgeInsets.only(right: 12),
-        backgroundColor: Colors.grey.shade200,
-        smartDashesType: SmartDashesType.disabled,
-        smartQuotesType: SmartQuotesType.disabled,
-        onChanged: (value) {
-          viewModel.searchValue = value;
-        },
+        title: Text(customer.fullName),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (customer.companyName.isNotEmpty)
+              Text(customer.companyName),
+            Text(customer.phoneNumber),
+          ],
+        ),
+        trailing: Icon(Icons.chevron_right),
       ),
     );
+  }
+
+  Widget _searchBar() {
+    return Observer(builder: (_) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: CupertinoSearchTextField(
+          controller: TextEditingController(text: viewModel.searchValue),
+          borderRadius: BorderRadius.circular(12),
+          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+          prefixInsets: EdgeInsets.only(left: 12),
+          suffixInsets: EdgeInsets.only(right: 12),
+          backgroundColor: Colors.grey.shade200,
+          smartDashesType: SmartDashesType.disabled,
+          smartQuotesType: SmartQuotesType.disabled,
+          onChanged: (value) {
+            viewModel.searchValue = value;
+          },
+        ),
+      );
+    });
   }
 
   bool searchCondition(Customer customer) {
@@ -137,7 +160,7 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
           builder: (context) => AddCustomerBottomSheet(onAddCustomer: viewModel.addCustomer),
         );
       },
-      child: const Icon(Icons.add),
+      child: const Icon(Icons.person_add_outlined),
     );
   }
 }

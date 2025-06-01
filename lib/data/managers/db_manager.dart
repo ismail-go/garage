@@ -189,10 +189,24 @@ abstract class _DbManager with Store {
   // Stream of customers for real-time updates
   Stream<List<Customer>> streamCustomers() {
     return _firestore.collection('owners').snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
+      final customerList = snapshot.docs.map((doc) {
         final data = doc.data();
         return Customer.fromJson(data);
       }).toList();
+      // Sort customers by full name for consistent ordering
+      customerList.sort((a, b) => a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()));
+      return customerList;
+    });
+  }
+
+  // Stream of a single customer for real-time updates
+  Stream<Customer?> streamCustomer(String ownerId) {
+    return _firestore.collection('owners').doc(ownerId).snapshots().map((snapshot) {
+      if (snapshot.exists && snapshot.data() != null) {
+        return Customer.fromJson(snapshot.data()!);
+      } else {
+        return null; // Customer document doesn't exist or has no data
+      }
     });
   }
 
@@ -372,27 +386,25 @@ abstract class _DbManager with Store {
     }
   }
 
-  // Stream of vehicles for a specific customer for real-time updates
+  // Stream of vehicles for a specific customer
   Stream<List<Vehicle>> streamCustomerVehicles(String ownerId) {
     return _firestore
         .collection('vehicles')
         .where('owner_id', isEqualTo: ownerId)
         .snapshots()
         .map((snapshot) {
-          final vehicles = snapshot.docs.map((doc) {
-            final data = doc.data();
-            return Vehicle.fromJson(data);
-          }).toList();
-
-          // Sort vehicles by manufacturer and model
-          vehicles.sort((a, b) {
-            int manufacturerCompare = a.manufacturer.compareTo(b.manufacturer);
-            if (manufacturerCompare != 0) return manufacturerCompare;
-            return a.model.compareTo(b.model);
-          });
-
-          return vehicles;
-        });
+      final customerVehicles = snapshot.docs.map((doc) {
+        final data = doc.data(); // No need to cast if Vehicle.fromJson handles it
+        return Vehicle.fromJson(data);
+      }).toList();
+      // Sort vehicles by manufacturer and model
+      customerVehicles.sort((a, b) {
+        int manufacturerCompare = a.manufacturer.compareTo(b.manufacturer);
+        if (manufacturerCompare != 0) return manufacturerCompare;
+        return a.model.compareTo(b.model);
+      });
+      return customerVehicles;
+    });
   }
 
   bool get hasInitialLoad => _hasInitialLoad;

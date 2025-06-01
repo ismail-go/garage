@@ -9,22 +9,6 @@ part of 'customers_view_model.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$CustomersViewModel on _CustomersViewModel, Store {
-  late final _$customersAtom =
-      Atom(name: '_CustomersViewModel.customers', context: context);
-
-  @override
-  ObservableList<Customer> get customers {
-    _$customersAtom.reportRead();
-    return super.customers;
-  }
-
-  @override
-  set customers(ObservableList<Customer> value) {
-    _$customersAtom.reportWrite(value, super.customers, () {
-      super.customers = value;
-    });
-  }
-
   late final _$searchValueAtom =
       Atom(name: '_CustomersViewModel.searchValue', context: context);
 
@@ -41,36 +25,20 @@ mixin _$CustomersViewModel on _CustomersViewModel, Store {
     });
   }
 
-  late final _$isLoadingAtom =
-      Atom(name: '_CustomersViewModel.isLoading', context: context);
+  late final _$isPerformingActionAtom =
+      Atom(name: '_CustomersViewModel.isPerformingAction', context: context);
 
   @override
-  bool get isLoading {
-    _$isLoadingAtom.reportRead();
-    return super.isLoading;
+  bool get isPerformingAction {
+    _$isPerformingActionAtom.reportRead();
+    return super.isPerformingAction;
   }
 
   @override
-  set isLoading(bool value) {
-    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
-      super.isLoading = value;
+  set isPerformingAction(bool value) {
+    _$isPerformingActionAtom.reportWrite(value, super.isPerformingAction, () {
+      super.isPerformingAction = value;
     });
-  }
-
-  late final _$loadCustomersAsyncAction =
-      AsyncAction('_CustomersViewModel.loadCustomers', context: context);
-
-  @override
-  Future<void> loadCustomers() {
-    return _$loadCustomersAsyncAction.run(() => super.loadCustomers());
-  }
-
-  late final _$refreshCustomersAsyncAction =
-      AsyncAction('_CustomersViewModel.refreshCustomers', context: context);
-
-  @override
-  Future<void> refreshCustomers() {
-    return _$refreshCustomersAsyncAction.run(() => super.refreshCustomers());
   }
 
   late final _$addCustomerAsyncAction =
@@ -79,15 +47,6 @@ mixin _$CustomersViewModel on _CustomersViewModel, Store {
   @override
   Future<void> addCustomer(Customer customer) {
     return _$addCustomerAsyncAction.run(() => super.addCustomer(customer));
-  }
-
-  late final _$updateCustomerAsyncAction =
-      AsyncAction('_CustomersViewModel.updateCustomer', context: context);
-
-  @override
-  Future<void> updateCustomer(String ownerId, Customer customer) {
-    return _$updateCustomerAsyncAction
-        .run(() => super.updateCustomer(ownerId, customer));
   }
 
   late final _$deleteCustomerAsyncAction =
@@ -101,9 +60,8 @@ mixin _$CustomersViewModel on _CustomersViewModel, Store {
   @override
   String toString() {
     return '''
-customers: ${customers},
 searchValue: ${searchValue},
-isLoading: ${isLoading}
+isPerformingAction: ${isPerformingAction}
     ''';
   }
 }

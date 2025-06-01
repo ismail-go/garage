@@ -25,139 +25,124 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        if (viewModel.isDeleting) {
-          // If deletion is in progress, show a SnackBar and prevent popping.
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Deletion in progress. Please wait."),
-              duration: Duration(seconds: 2),
-            ),
-          );
-          return false; // Prevent back navigation
-        }
-        return true; // Allow back navigation
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Vehicle Details'),
-          actions: <Widget>[
-            Observer(
-              builder: (_) {
-                if (viewModel.isDeleting) {
-                  return SizedBox.shrink();
-                }
-                return IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      useSafeArea: true,
-                      builder: (context) => AddVehicleBottomSheet(
-                        ownerId: viewModel.vehicle.ownerId,
-                        vehicle: viewModel.vehicle,
-                        onAddVehicle: (vehicleFromSheet) async {
-                          await viewModel.updateVehicle(vehicleFromSheet);
-                          if (mounted) {
-                            Navigator.pop(context, viewModel.vehicle);
-                          }
-                        },
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
-        ),
-        body: Observer(
-          builder: (_) {
-            if (viewModel.isDeleting) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    SizedBox(height: 16),
-                    Text("Deleting Vehicle..."),
-                  ],
-                )
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Vehicle Details'),
+        actions: <Widget>[
+          Observer(
+            builder: (_) {
+              if (viewModel.isDeleting) {
+                return SizedBox.shrink();
+              }
+              return IconButton(
+                icon: Icon(Icons.edit),
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    useSafeArea: true,
+                    builder: (context) => AddVehicleBottomSheet(
+                      ownerId: viewModel.vehicle.ownerId,
+                      vehicle: viewModel.vehicle,
+                      onAddVehicle: (vehicleFromSheet) async {
+                        await viewModel.updateVehicle(vehicleFromSheet);
+                        if (mounted) {
+                          Navigator.pop(context, viewModel.vehicle);
+                        }
+                      },
+                    ),
+                  );
+                },
               );
-            }
-            final vehicle = viewModel.vehicle;
-            return ListView(
-              padding: const EdgeInsets.all(16.0).copyWith(bottom: MediaQuery.of(context).padding.bottom + 16 + 70),
-              children: <Widget>[
-                Center(
-                  child: Column(
-                    children: [
-                      if (vehicle.imageUrl.isNotEmpty)
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.network(
-                            vehicle.imageUrl,
-                            height: 150,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                              Container(height: 150, color: Colors.grey[300], child: Icon(Icons.directions_car, size: 50, color: Colors.grey[600])),
-                          ),
-                        )
-                      else
-                        Container(
+            },
+          ),
+        ],
+      ),
+      body: Observer(
+        builder: (_) {
+          if (viewModel.isDeleting) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text("Deleting Vehicle..."),
+                ],
+              )
+            );
+          }
+          final vehicle = viewModel.vehicle;
+          return ListView(
+            padding: const EdgeInsets.all(16.0).copyWith(bottom: MediaQuery.of(context).padding.bottom + 16 + 70),
+            children: <Widget>[
+              Center(
+                child: Column(
+                  children: [
+                    if (vehicle.imageUrl.isNotEmpty)
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network(
+                          vehicle.imageUrl,
                           height: 150,
                           width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: Icon(Icons.directions_car, size: 80, color: Colors.grey[700]),
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                            Container(height: 150, color: Colors.grey[300], child: Icon(Icons.directions_car, size: 50, color: Colors.grey[600])),
                         ),
-                      SizedBox(height: 16),
-                      Text(
-                        '${vehicle.manufacturer} ${vehicle.model}',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
+                      )
+                    else
+                      Container(
+                        height: 150,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Icon(Icons.directions_car, size: 80, color: Colors.grey[700]),
                       ),
-                      Text(
-                        'Year: ${vehicle.year}',
-                        style: Theme.of(context).textTheme.titleMedium,
-                        textAlign: TextAlign.center,
-                      ),
-                      Text(
-                        'Plate: ${vehicle.plateNo}',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 24),
+                    SizedBox(height: 16),
+                    Text(
+                      '${vehicle.manufacturer} ${vehicle.model}',
+                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      'Year: ${vehicle.year}',
+                      style: Theme.of(context).textTheme.titleMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    Text(
+                      'Plate: ${vehicle.plateNo}',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 24),
+                  ],
+                ),
+              ),
+              Card(
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDetailRow(context, 'Kilometers', '${vehicle.kilometer} km'),
+                      _buildDetailRow(context, 'Fuel Type', vehicle.fuelType),
+                      _buildDetailRow(context, 'Last Service', _formatTimestamp(vehicle.lastServiceDate)),
+                      _buildDetailRow(context, 'Next Service Due', _formatTimestamp(vehicle.nextServiceDue)),
+                      _buildDetailRow(context, 'Created At', _formatTimestamp(vehicle.createdAt)),
+                      _buildDetailRow(context, 'Updated At', _formatTimestamp(vehicle.updatedAt)),
                     ],
                   ),
                 ),
-                Card(
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildDetailRow(context, 'Kilometers', '${vehicle.kilometer} km'),
-                        _buildDetailRow(context, 'Fuel Type', vehicle.fuelType),
-                        _buildDetailRow(context, 'Last Service', _formatTimestamp(vehicle.lastServiceDate)),
-                        _buildDetailRow(context, 'Next Service Due', _formatTimestamp(vehicle.nextServiceDue)),
-                        _buildDetailRow(context, 'Created At', _formatTimestamp(vehicle.createdAt)),
-                        _buildDetailRow(context, 'Updated At', _formatTimestamp(vehicle.updatedAt)),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 24),
-                _buildDeleteVehicleButton(context, vehicle),
-              ],
-            );
-          },
-        ),
+              ),
+              SizedBox(height: 24),
+              _buildDeleteVehicleButton(context, vehicle),
+            ],
+          );
+        },
       ),
     );
   }

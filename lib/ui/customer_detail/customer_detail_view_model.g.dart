@@ -9,63 +9,103 @@ part of 'customer_detail_view_model.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$CustomerDetailViewModel on _CustomerDetailViewModel, Store {
-  late final _$vehiclesAtom =
-      Atom(name: '_CustomerDetailViewModel.vehicles', context: context);
+  Computed<bool>? _$isProcessingCustomerDeletionComputed;
 
   @override
-  List<Vehicle> get vehicles {
-    _$vehiclesAtom.reportRead();
-    return super.vehicles;
+  bool get isProcessingCustomerDeletion =>
+      (_$isProcessingCustomerDeletionComputed ??= Computed<bool>(
+              () => super.isProcessingCustomerDeletion,
+              name: '_CustomerDetailViewModel.isProcessingCustomerDeletion'))
+          .value;
+
+  late final _$customerAtom =
+      Atom(name: '_CustomerDetailViewModel.customer', context: context);
+
+  @override
+  Customer? get customer {
+    _$customerAtom.reportRead();
+    return super.customer;
   }
 
   @override
-  set vehicles(List<Vehicle> value) {
-    _$vehiclesAtom.reportWrite(value, super.vehicles, () {
-      super.vehicles = value;
+  set customer(Customer? value) {
+    _$customerAtom.reportWrite(value, super.customer, () {
+      super.customer = value;
     });
   }
 
-  late final _$isLoadingVehiclesAtom = Atom(
-      name: '_CustomerDetailViewModel.isLoadingVehicles', context: context);
+  late final _$isCustomerLoadingAtom = Atom(
+      name: '_CustomerDetailViewModel.isCustomerLoading', context: context);
 
   @override
-  bool get isLoadingVehicles {
-    _$isLoadingVehiclesAtom.reportRead();
-    return super.isLoadingVehicles;
+  bool get isCustomerLoading {
+    _$isCustomerLoadingAtom.reportRead();
+    return super.isCustomerLoading;
   }
 
   @override
-  set isLoadingVehicles(bool value) {
-    _$isLoadingVehiclesAtom.reportWrite(value, super.isLoadingVehicles, () {
-      super.isLoadingVehicles = value;
+  set isCustomerLoading(bool value) {
+    _$isCustomerLoadingAtom.reportWrite(value, super.isCustomerLoading, () {
+      super.isCustomerLoading = value;
     });
   }
 
-  late final _$fetchVehiclesAsyncAction =
-      AsyncAction('_CustomerDetailViewModel.fetchVehicles', context: context);
+  late final _$customerLoadingErrorAtom = Atom(
+      name: '_CustomerDetailViewModel.customerLoadingError', context: context);
 
   @override
-  Future<void> fetchVehicles() {
-    return _$fetchVehiclesAsyncAction.run(() => super.fetchVehicles());
+  String? get customerLoadingError {
+    _$customerLoadingErrorAtom.reportRead();
+    return super.customerLoadingError;
   }
 
-  late final _$deleteVehicleAndWorkOrdersAsyncAction = AsyncAction(
-      '_CustomerDetailViewModel.deleteVehicleAndWorkOrders',
-      context: context);
+  @override
+  set customerLoadingError(String? value) {
+    _$customerLoadingErrorAtom.reportWrite(value, super.customerLoadingError,
+        () {
+      super.customerLoadingError = value;
+    });
+  }
+
+  late final _$isLoadingAtom =
+      Atom(name: '_CustomerDetailViewModel.isLoading', context: context);
 
   @override
-  Future<bool> deleteVehicleAndWorkOrders(String vin) {
-    return _$deleteVehicleAndWorkOrdersAsyncAction
-        .run(() => super.deleteVehicleAndWorkOrders(vin));
+  bool get isLoading {
+    _$isLoadingAtom.reportRead();
+    return super.isLoading;
+  }
+
+  @override
+  set isLoading(bool value) {
+    _$isLoadingAtom.reportWrite(value, super.isLoading, () {
+      super.isLoading = value;
+    });
+  }
+
+  late final _$_isDeletingCustomerAtom = Atom(
+      name: '_CustomerDetailViewModel._isDeletingCustomer', context: context);
+
+  @override
+  bool get _isDeletingCustomer {
+    _$_isDeletingCustomerAtom.reportRead();
+    return super._isDeletingCustomer;
+  }
+
+  @override
+  set _isDeletingCustomer(bool value) {
+    _$_isDeletingCustomerAtom.reportWrite(value, super._isDeletingCustomer, () {
+      super._isDeletingCustomer = value;
+    });
   }
 
   late final _$updateCustomerAsyncAction =
       AsyncAction('_CustomerDetailViewModel.updateCustomer', context: context);
 
   @override
-  Future<void> updateCustomer(Customer updatedCustomer) {
+  Future<void> updateCustomer(Customer customerToUpdate) {
     return _$updateCustomerAsyncAction
-        .run(() => super.updateCustomer(updatedCustomer));
+        .run(() => super.updateCustomer(customerToUpdate));
   }
 
   late final _$deleteCustomerAndDataAsyncAction = AsyncAction(
@@ -78,36 +118,14 @@ mixin _$CustomerDetailViewModel on _CustomerDetailViewModel, Store {
         .run(() => super.deleteCustomerAndData());
   }
 
-  late final _$_CustomerDetailViewModelActionController =
-      ActionController(name: '_CustomerDetailViewModel', context: context);
-
-  @override
-  void updateVehicleInList(Vehicle updatedVehicle) {
-    final _$actionInfo = _$_CustomerDetailViewModelActionController.startAction(
-        name: '_CustomerDetailViewModel.updateVehicleInList');
-    try {
-      return super.updateVehicleInList(updatedVehicle);
-    } finally {
-      _$_CustomerDetailViewModelActionController.endAction(_$actionInfo);
-    }
-  }
-
-  @override
-  void removeVehicleFromListByVin(String vin) {
-    final _$actionInfo = _$_CustomerDetailViewModelActionController.startAction(
-        name: '_CustomerDetailViewModel.removeVehicleFromListByVin');
-    try {
-      return super.removeVehicleFromListByVin(vin);
-    } finally {
-      _$_CustomerDetailViewModelActionController.endAction(_$actionInfo);
-    }
-  }
-
   @override
   String toString() {
     return '''
-vehicles: ${vehicles},
-isLoadingVehicles: ${isLoadingVehicles}
+customer: ${customer},
+isCustomerLoading: ${isCustomerLoading},
+customerLoadingError: ${customerLoadingError},
+isLoading: ${isLoading},
+isProcessingCustomerDeletion: ${isProcessingCustomerDeletion}
     ''';
   }
 }

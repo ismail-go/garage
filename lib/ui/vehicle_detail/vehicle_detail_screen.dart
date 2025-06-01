@@ -4,6 +4,7 @@ import 'package:garage/core/base/base_state.dart';
 import 'package:garage/data/model/vehicle/vehicle.dart';
 import 'package:garage/ui/vehicle_detail/vehicle_detail_view_model.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_vehicle/add_vehicle_sheet.dart'; // Import AddVehicleBottomSheet
+import 'package:garage/ui/widgets/custom_bars/blurred_app_bar.dart'; // Added import
 import 'package:intl/intl.dart'; // For date formatting
 
 class VehicleDetailScreen extends StatefulWidget {
@@ -25,8 +26,12 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
 
   @override
   Widget build(BuildContext context) {
+    // final appBarIconColor = Theme.of(context).appBarTheme.actionsIconTheme?.color ?? 
+    //                         (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.white);
+
     return Scaffold(
-      appBar: AppBar(
+      extendBodyBehindAppBar: true, // Added for blur effect
+      appBar: BlurredAppBar( // Replaced AppBar
         title: Text('Vehicle Details'),
         actions: <Widget>[
           Observer(
@@ -36,6 +41,7 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
               }
               return IconButton(
                 icon: Icon(Icons.edit),
+                // color: appBarIconColor, // Reverted: Removed explicit color
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
@@ -74,7 +80,11 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
           }
           final vehicle = viewModel.vehicle;
           return ListView(
-            padding: const EdgeInsets.all(16.0).copyWith(bottom: MediaQuery.of(context).padding.bottom + 16 + 70),
+            padding: const EdgeInsets.all(16.0)
+                .copyWith(
+                  top: (const EdgeInsets.all(16.0).top) + kToolbarHeight + MediaQuery.of(context).padding.top, // Adjusted top padding
+                  bottom: (const EdgeInsets.all(16.0).bottom) + MediaQuery.of(context).padding.bottom + 16 + 70 // Keep existing logic for bottom
+                ),
             children: <Widget>[
               Center(
                 child: Column(

@@ -30,7 +30,7 @@ abstract class _AddVehicleViewModel extends BaseViewModel with Store {
   String vin = ''; // This will hold form input if user types; ignored for new, used for display if editing
   String kilometer = '';
   String fuelType = '';
-  String imageUrl = ''; 
+  String imageUrl = '';
   int? lastServiceDate;
   int? nextServiceDate;
 
@@ -63,7 +63,7 @@ abstract class _AddVehicleViewModel extends BaseViewModel with Store {
       try {
         final vehicleToSave = Vehicle(
           vin: originalVehicle?.vin ?? Uuid().v4(), // Use existing VIN or generate new for new vehicle
-          ownerId: ownerId, 
+          ownerId: ownerId,
           manufacturer: manufacturer,
           model: model,
           year: year,
@@ -73,7 +73,7 @@ abstract class _AddVehicleViewModel extends BaseViewModel with Store {
           createdAt: originalVehicle?.createdAt ?? DateTime.now().millisecondsSinceEpoch,
           updatedAt: DateTime.now().millisecondsSinceEpoch,
           driverId: originalVehicle?.driverId ?? '', // Preserve or default
-          imageUrl: imageUrl, 
+          imageUrl: imageUrl,
           lastServiceDate: lastServiceDate ?? originalVehicle?.lastServiceDate ?? 0,
           nextServiceDue: nextServiceDate ?? originalVehicle?.nextServiceDue ?? 0,
         );
@@ -85,9 +85,7 @@ abstract class _AddVehicleViewModel extends BaseViewModel with Store {
       } catch (e) {
         print("Error saving vehicle: $e");
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(originalVehicle != null ? "Error updating vehicle" : "Error saving vehicle"))
-          );
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(originalVehicle != null ? "Error updating vehicle" : "Error saving vehicle")));
         }
       } finally {
         isSaving = false;
@@ -100,4 +98,4 @@ abstract class _AddVehicleViewModel extends BaseViewModel with Store {
 
   @override
   void dispose() {}
-} 
+}

@@ -9,6 +9,7 @@ import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_sheet.
 import 'package:garage/ui/widgets/bottom_sheets/add_vehicle/add_vehicle_sheet.dart';
 import 'package:garage/ui/vehicle_detail/vehicle_detail_screen.dart';
 import 'package:garage/ui/vehicle_detail/vehicle_detail_view_model.dart';
+import 'package:garage/ui/widgets/custom_bars/blurred_app_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -30,7 +31,8 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      extendBodyBehindAppBar: true,
+      appBar: BlurredAppBar(
         actions: <Widget>[
           Observer(
             builder: (_) {
@@ -117,7 +119,12 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
           }
           
           return ListView(
-            padding: EdgeInsets.fromLTRB(16, 0, 16, MediaQuery.of(context).padding.bottom + 16 + 70),
+            padding: EdgeInsets.fromLTRB(
+                16, 
+                kToolbarHeight + MediaQuery.of(context).padding.top,
+                16, 
+                MediaQuery.of(context).padding.bottom + 16 + 70
+            ),
             children: [
               Observer(builder: (_) {
                 final customer = viewModel.customer!;

@@ -7,6 +7,8 @@ import 'package:garage/ui/home/home_screen.dart';
 import 'package:garage/ui/main/main_view_model.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_sheet.dart';
+import 'package:garage/ui/widgets/custom_bars/blurred_app_bar.dart';
+import 'package:garage/ui/widgets/custom_bars/blurred_bottom_nav_bar.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -25,8 +27,7 @@ class _MainScreenState extends BaseState<MainViewModel, MainScreen> {
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
       extendBody: true,
-      appBar: AppBar(
-        titleSpacing: 0,
+      appBar: BlurredAppBar(
         title: Observer(builder: (context) {
           return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -56,13 +57,15 @@ class _MainScreenState extends BaseState<MainViewModel, MainScreen> {
         return const SizedBox.shrink(); // Return an empty widget instead of null
       }),
       bottomNavigationBar: Observer(builder: (context) {
-        return BottomNavigationBar(
-          items: [BottomNavigationBarItem(icon: Icon(Icons.home), label: ""), BottomNavigationBarItem(icon: Icon(Icons.group), label: "")],
+        return BlurredBottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: ""), 
+            BottomNavigationBarItem(icon: Icon(Icons.group), label: "")
+          ],
           onTap: (value) {
             viewModel.currentIndex = value;
-            viewModel.pageController.animateToPage(value, duration: Duration(microseconds: 200), curve: Curves.linear);
+            viewModel.pageController.animateToPage(value, duration: Duration(milliseconds: 200), curve: Curves.linear);
           },
-          selectedFontSize: 0,
           currentIndex: viewModel.currentIndex,
         );
       }),

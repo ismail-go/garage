@@ -29,8 +29,8 @@ class _MainScreenState extends BaseState<MainViewModel, MainScreen> {
         titleSpacing: 0,
         title: Observer(builder: (context) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(viewModel.currentIndex == 0 ? "Gözen Otomotiv" : "Müşteriler"),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(viewModel.currentIndex == 0 ? "Gözen Otomotiv" : "Müşteriler"),
           );
         }),
       ),

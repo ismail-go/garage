@@ -25,6 +25,22 @@ mixin _$DbManager on _DbManager, Store {
     });
   }
 
+  late final _$vehiclesAtom =
+      Atom(name: '_DbManager.vehicles', context: context);
+
+  @override
+  List<Vehicle> get vehicles {
+    _$vehiclesAtom.reportRead();
+    return super.vehicles;
+  }
+
+  @override
+  set vehicles(List<Vehicle> value) {
+    _$vehiclesAtom.reportWrite(value, super.vehicles, () {
+      super.vehicles = value;
+    });
+  }
+
   late final _$workOrdersAtom =
       Atom(name: '_DbManager.workOrders', context: context);
 
@@ -108,10 +124,45 @@ mixin _$DbManager on _DbManager, Store {
         .run(() => super.deleteWorkOrder(vehicleId));
   }
 
+  late final _$fetchCustomerVehiclesAsyncAction =
+      AsyncAction('_DbManager.fetchCustomerVehicles', context: context);
+
+  @override
+  Future<List<Vehicle>> fetchCustomerVehicles(String ownerId) {
+    return _$fetchCustomerVehiclesAsyncAction
+        .run(() => super.fetchCustomerVehicles(ownerId));
+  }
+
+  late final _$addVehicleAsyncAction =
+      AsyncAction('_DbManager.addVehicle', context: context);
+
+  @override
+  Future<void> addVehicle(Vehicle vehicle) {
+    return _$addVehicleAsyncAction.run(() => super.addVehicle(vehicle));
+  }
+
+  late final _$updateVehicleAsyncAction =
+      AsyncAction('_DbManager.updateVehicle', context: context);
+
+  @override
+  Future<void> updateVehicle(String vin, Vehicle vehicle) {
+    return _$updateVehicleAsyncAction
+        .run(() => super.updateVehicle(vin, vehicle));
+  }
+
+  late final _$deleteVehicleAsyncAction =
+      AsyncAction('_DbManager.deleteVehicle', context: context);
+
+  @override
+  Future<void> deleteVehicle(String vin) {
+    return _$deleteVehicleAsyncAction.run(() => super.deleteVehicle(vin));
+  }
+
   @override
   String toString() {
     return '''
 customers: ${customers},
+vehicles: ${vehicles},
 workOrders: ${workOrders}
     ''';
   }

@@ -3,6 +3,7 @@ import 'package:garage/core/base/base_view_model.dart';
 import 'package:mobx/mobx.dart';
 import 'package:garage/data/managers/db_manager.dart';
 import '../../data/model/customer/customer.dart';
+import '../../data/model/vehicle/vehicle.dart';
 
 part 'customer_detail_view_model.g.dart';
 
@@ -13,21 +14,41 @@ class CustomerDetailViewModel extends _CustomerDetailViewModel with _$CustomerDe
 abstract class _CustomerDetailViewModel extends BaseViewModel with Store {
   final Customer customer;
 
-  _CustomerDetailViewModel(this.customer);
+  _CustomerDetailViewModel(this.customer) {
+    init();
+  }
+
+  @observable
+  List<Vehicle> vehicles = [];
+
+  @observable
+  bool isLoadingVehicles = false;
+
+  @action
+  Future<void> fetchVehicles() async {
+    isLoadingVehicles = true;
+    try {
+      vehicles = await dbManager.fetchCustomerVehicles(customer.ownerId);
+    } catch (e) {
+      print("Error fetching vehicles: $e");
+      vehicles = [];
+    } finally {
+      isLoadingVehicles = false;
+    }
+  }
 
   @action
   Future<void> updateCustomer(Customer updatedCustomer) async {
-    // Make sure we preserve the original customer's ID and other important fields
     final customerToUpdate = Customer(
-      ownerId: customer.ownerId,  // Keep the original ownerId
+      ownerId: customer.ownerId,
       fullName: updatedCustomer.fullName,
       companyName: updatedCustomer.companyName,
       email: updatedCustomer.email,
       phoneNumber: updatedCustomer.phoneNumber,
-      nationalId: updatedCustomer.nationalId,  // Allow nationalId to be updated
+      nationalId: updatedCustomer.nationalId,
       taxId: updatedCustomer.taxId,
       address: updatedCustomer.address,
-      createdAt: customer.createdAt,  // Keep the original creation date
+      createdAt: customer.createdAt,
       updatedAt: DateTime.now().millisecondsSinceEpoch,
       ownerType: customer.ownerType,
       profilePhotoUrl: customer.profilePhotoUrl,
@@ -38,7 +59,9 @@ abstract class _CustomerDetailViewModel extends BaseViewModel with Store {
   }
 
   @override
-  void init() {}
+  void init() {
+    fetchVehicles();
+  }
 
   @override
   void dispose() {

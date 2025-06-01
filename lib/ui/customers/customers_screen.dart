@@ -35,17 +35,17 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
       return Stack(
         children: [
           ListView.builder(
-            padding: EdgeInsets.all(16).add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, top: MediaQuery.of(context).padding.top)),
-            itemCount: viewModel.customers.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return _searchBar();
-              }
-              final customer = viewModel.customers[index - 1];
-              return Observer(builder: (context) {
-                return searchCondition(customer) ? _customerItem(customer) : SizedBox.shrink();
-              });
-            },
+        padding: EdgeInsets.all(16).add(EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom, top: MediaQuery.of(context).padding.top)),
+        itemCount: viewModel.customers.length + 1,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return _searchBar();
+          }
+          final customer = viewModel.customers[index - 1];
+          return Observer(builder: (context) {
+            return searchCondition(customer) ? _customerItem(customer) : SizedBox.shrink();
+          });
+        },
           ),
           if (viewModel.customers.isEmpty)
             Center(
@@ -70,22 +70,22 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
         await viewModel.deleteCustomer(customer.ownerId);
       },
       child: Card(
-        margin: EdgeInsets.symmetric(vertical: 4),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
-        color: Colors.grey.shade200,
-        shadowColor: Colors.transparent,
-        child: ListTile(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
+      margin: EdgeInsets.symmetric(vertical: 4),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+      color: Colors.grey.shade200,
+      shadowColor: Colors.transparent,
+      child: ListTile(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
                 builder: (context) => CustomerDetailScreen(
                   viewModel: CustomerDetailViewModel(customer),
                   customersViewModel: viewModel,
                 ),
-              ),
-            );
-          },
+            ),
+          );
+        },
           leading: CircleAvatar(
             backgroundColor: Colors.grey.shade300,
             backgroundImage: customer.profilePhotoUrl.isNotEmpty
@@ -104,7 +104,7 @@ class _CustomersScreenState extends BaseState<CustomersViewModel, CustomersScree
               Text(customer.phoneNumber),
             ],
           ),
-          trailing: Icon(Icons.chevron_right),
+        trailing: Icon(Icons.chevron_right),
         ),
       ),
     );

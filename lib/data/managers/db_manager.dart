@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:garage/data/model/customer/customer.dart';
+import 'package:garage/data/model/vehicle/vehicle.dart';
 import 'package:garage/data/model/work_order/work_order.dart';
 import 'package:mobx/mobx.dart';
 import 'dart:convert';
@@ -20,6 +21,9 @@ abstract class _DbManager with Store {
 
   @observable
   List<Customer> customers = [];
+
+  @observable
+  List<Vehicle> vehicles = [];
 
   @observable
   List<WorkOrder> workOrders = [];
@@ -207,6 +211,105 @@ abstract class _DbManager with Store {
     } catch (e) {
       print('Error adding sample owners: $e');
     }
+  }
+
+  // Fetch vehicles for a specific customer
+  @action
+  Future<List<Vehicle>> fetchCustomerVehicles(String ownerId) async {
+    try {
+      final QuerySnapshot snapshot = await _firestore
+          .collection('vehicles')
+          .where('owner_id', isEqualTo: ownerId)
+          .get();
+
+      final customerVehicles = snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Vehicle.fromJson(data);
+      }).toList();
+
+      // Sort vehicles by manufacturer and model
+      customerVehicles.sort((a, b) {
+        int manufacturerCompare = a.manufacturer.compareTo(b.manufacturer);
+        if (manufacturerCompare != 0) return manufacturerCompare;
+        return a.model.compareTo(b.model);
+      });
+
+      return customerVehicles;
+    } catch (e) {
+      print('Error fetching customer vehicles: $e');
+      return [];
+    }
+  }
+
+  // Add a vehicle
+  @action
+  Future<void> addVehicle(Vehicle vehicle) async {
+    try {
+      await _firestore.collection('vehicles').doc(vehicle.vin).set(vehicle.toJson());
+      vehicles = [...vehicles, vehicle];
+      vehicles.sort((a, b) {
+        int manufacturerCompare = a.manufacturer.compareTo(b.manufacturer);
+        if (manufacturerCompare != 0) return manufacturerCompare;
+        return a.model.compareTo(b.model);
+      });
+    } catch (e) {
+      print('Error adding vehicle: $e');
+    }
+  }
+
+  // Update a vehicle
+  @action
+  Future<void> updateVehicle(String vin, Vehicle vehicle) async {
+    try {
+      await _firestore.collection('vehicles').doc(vin).update(vehicle.toJson());
+      final index = vehicles.indexWhere((v) => v.vin == vin);
+      if (index != -1) {
+        final List<Vehicle> updatedList = List.from(vehicles);
+        updatedList[index] = vehicle;
+        updatedList.sort((a, b) {
+          int manufacturerCompare = a.manufacturer.compareTo(b.manufacturer);
+          if (manufacturerCompare != 0) return manufacturerCompare;
+          return a.model.compareTo(b.model);
+        });
+        vehicles = updatedList;
+      }
+    } catch (e) {
+      print('Error updating vehicle: $e');
+    }
+  }
+
+  // Delete a vehicle
+  @action
+  Future<void> deleteVehicle(String vin) async {
+    try {
+      await _firestore.collection('vehicles').doc(vin).delete();
+      vehicles = vehicles.where((v) => v.vin != vin).toList();
+    } catch (e) {
+      print('Error deleting vehicle: $e');
+    }
+  }
+
+  // Stream of vehicles for a specific customer for real-time updates
+  Stream<List<Vehicle>> streamCustomerVehicles(String ownerId) {
+    return _firestore
+        .collection('vehicles')
+        .where('owner_id', isEqualTo: ownerId)
+        .snapshots()
+        .map((snapshot) {
+          final vehicles = snapshot.docs.map((doc) {
+            final data = doc.data();
+            return Vehicle.fromJson(data);
+          }).toList();
+
+          // Sort vehicles by manufacturer and model
+          vehicles.sort((a, b) {
+            int manufacturerCompare = a.manufacturer.compareTo(b.manufacturer);
+            if (manufacturerCompare != 0) return manufacturerCompare;
+            return a.model.compareTo(b.model);
+          });
+
+          return vehicles;
+        });
   }
 
   bool get hasInitialLoad => _hasInitialLoad;

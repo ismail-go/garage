@@ -2,7 +2,7 @@ class FakeData {
   static String ownersData = """
   {
     "owners": [
-      {
+  {
         "address": "123 Main Street, Istanbul",
         "company_name": "Turk Motors",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -106,8 +106,8 @@ class FakeData {
         "tax_id": "3210987654",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["35 EFG 123"]
-      },
-      {
+  },
+  {
         "address": "567 Commercial District, Ankara",
         "company_name": "Capital Auto Group",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -121,8 +121,8 @@ class FakeData {
         "tax_id": "2109876543",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["06 HIJ 456", "06 KLM 789"]
-      },
-      {
+  },
+  {
         "address": "890 Marina Road, Bodrum",
         "company_name": "",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -136,8 +136,8 @@ class FakeData {
         "tax_id": "1098765432",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["48 NOP 012"]
-      },
-      {
+  },
+  {
         "address": "123 Transport Hub, Mersin",
         "company_name": "Mediterranean Transport Co.",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -181,8 +181,8 @@ class FakeData {
         "tax_id": "8765098765",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["41 ZAB 234", "41 CDE 567"]
-      },
-      {
+  },
+  {
         "address": "321 Beach Road, Alanya",
         "company_name": "",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -211,8 +211,8 @@ class FakeData {
         "tax_id": "6543076543",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["27 IJK 123", "27 LMN 456"]
-      },
-      {
+  },
+  {
         "address": "987 University Ave, Konya",
         "company_name": "",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -226,8 +226,8 @@ class FakeData {
         "tax_id": "5432065432",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["42 OPQ 789"]
-      },
-      {
+  },
+  {
         "address": "234 Trade Center, Samsun",
         "company_name": "Black Sea Transport",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -241,8 +241,8 @@ class FakeData {
         "tax_id": "4321054321",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["55 RST 012", "55 UVW 345"]
-      },
-      {
+  },
+  {
         "address": "567 Highland Road, Trabzon",
         "company_name": "",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -256,8 +256,8 @@ class FakeData {
         "tax_id": "3210943210",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["61 XYZ 678"]
-      },
-      {
+  },
+  {
         "address": "890 Industry Zone, Denizli",
         "company_name": "Aegean Fleet Services",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -271,8 +271,8 @@ class FakeData {
         "tax_id": "2109832109",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["20 ABC 901", "20 DEF 234"]
-      },
-      {
+  },
+  {
         "address": "123 Valley View, Kayseri",
         "company_name": "",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -286,8 +286,8 @@ class FakeData {
         "tax_id": "1098721098",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["38 GHI 567"]
-      },
-      {
+  },
+  {
         "address": "456 Logistics Park, Adana",
         "company_name": "South Transport Solutions",
         "created_at": ${DateTime.now().millisecondsSinceEpoch},
@@ -301,8 +301,8 @@ class FakeData {
         "tax_id": "0987610987",
         "updated_at": ${DateTime.now().millisecondsSinceEpoch},
         "vehicles": ["01 JKL 890", "01 MNO 123"]
-      }
-    ]
+  }
+]
   }
   """;
 }

@@ -1,309 +1,308 @@
 class FakeData {
-  static String customerData = """ {"customers" : [
+  static String ownersData = """
   {
-    "name": "John",
-    "surname": "Doe",
-    "tc_no": "12345678901",
-    "tax_no": "9876543210",
-    "tel_no": "+1-555-1234",
-    "address": "123 Elm St, Springfield",
-    "debit": 250.5
-  },
-  {
-    "name": "Jane",
-    "surname": "Smith",
-    "tc_no": "23456789012",
-    "tax_no": "8765432109",
-    "tel_no": "+1-555-5678",
-    "address": "456 Oak Ave, Springfield",
-    "debit": 120.0
-  },
-  {
-    "name": "Michael",
-    "surname": "Johnson",
-    "tc_no": "34567890123",
-    "tax_no": "7654321098",
-    "tel_no": "+1-555-8765",
-    "address": "789 Pine Rd, Lincoln",
-    "debit": 310.2
-  },
-  {
-    "name": "Emily",
-    "surname": "Williams",
-    "tc_no": "45678901234",
-    "tax_no": "6543210987",
-    "tel_no": "+1-555-4321",
-    "address": "101 Maple St, Lincoln",
-    "debit": 415.8
-  },
-  {
-    "name": "Daniel",
-    "surname": "Brown",
-    "tc_no": "56789012345",
-    "tax_no": "5432109876",
-    "tel_no": "+1-555-1357",
-    "address": "202 Cedar Blvd, Oakville",
-    "debit": 150.3
-  },
-  {
-    "name": "Olivia",
-    "surname": "Davis",
-    "tc_no": "67890123456",
-    "tax_no": "4321098765",
-    "tel_no": "+1-555-2468",
-    "address": "303 Birch Dr, Oakville",
-    "debit": 275.9
-  },
-  {
-    "name": "James",
-    "surname": "Miller",
-    "tc_no": "78901234567",
-    "tax_no": "3210987654",
-    "tel_no": "+1-555-8642",
-    "address": "404 Walnut St, Rivertown",
-    "debit": 199.4
-  },
-  {
-    "name": "Sophia",
-    "surname": "Wilson",
-    "tc_no": "89012345678",
-    "tax_no": "2109876543",
-    "tel_no": "+1-555-7531",
-    "address": "505 Chestnut Ln, Rivertown",
-    "debit": 320.8
-  },
-  {
-    "name": "Benjamin",
-    "surname": "Moore",
-    "tc_no": "90123456789",
-    "tax_no": "1098765432",
-    "tel_no": "+1-555-9999",
-    "address": "606 Pinehill Rd, Lakeview",
-    "debit": 540.6
-  },
-  {
-    "name": "Amelia",
-    "surname": "Taylor",
-    "tc_no": "12334567890",
-    "tax_no": "9987654321",
-    "tel_no": "+1-555-9876",
-    "address": "707 Rose St, Lakeview",
-    "debit": 430.7
-  },
-  {
-    "name": "William",
-    "surname": "Anderson",
-    "tc_no": "23445678901",
-    "tax_no": "8876543210",
-    "tel_no": "+1-555-6543",
-    "address": "808 Tulip Ave, Greenfield",
-    "debit": 215.4
-  },
-  {
-    "name": "Charlotte",
-    "surname": "Thomas",
-    "tc_no": "34556789012",
-    "tax_no": "7765432109",
-    "tel_no": "+1-555-3210",
-    "address": "909 Lily Ln, Greenfield",
-    "debit": 510.2
-  },
-  {
-    "name": "Henry",
-    "surname": "Jackson",
-    "tc_no": "45667890123",
-    "tax_no": "6654321098",
-    "tel_no": "+1-555-1235",
-    "address": "1010 Daisy St, Clearwater",
-    "debit": 119.8
-  },
-  {
-    "name": "Evelyn",
-    "surname": "White",
-    "tc_no": "56778901234",
-    "tax_no": "5543210987",
-    "tel_no": "+1-555-5679",
-    "address": "1111 Sunflower Ave, Clearwater",
-    "debit": 670.9
-  },
-  {
-    "name": "Alexander",
-    "surname": "Harris",
-    "tc_no": "67889012345",
-    "tax_no": "4432109876",
-    "tel_no": "+1-555-9753",
-    "address": "1212 Orchid Blvd, Seaview",
-    "debit": 189.6
-  },
-  {
-    "name": "Mia",
-    "surname": "Martin",
-    "tc_no": "78990123456",
-    "tax_no": "3321098765",
-    "tel_no": "+1-555-8640",
-    "address": "1313 Jasmine Rd, Seaview",
-    "debit": 212.7
-  },
-  {
-    "name": "Lucas",
-    "surname": "Garcia",
-    "tc_no": "89001234567",
-    "tax_no": "2210987654",
-    "tel_no": "+1-555-4444",
-    "address": "1414 Palm St, Hilltop",
-    "debit": 478.3
-  },
-  {
-    "name": "Zoe",
-    "surname": "Martinez",
-    "tc_no": "90112345678",
-    "tax_no": "1109876543",
-    "tel_no": "+1-555-3333",
-    "address": "1515 Mango Ave, Hilltop",
-    "debit": 635.2
-  },
-  {
-    "name": "Samuel",
-    "surname": "Rodriguez",
-    "tc_no": "12323456789",
-    "tax_no": "9987654321",
-    "tel_no": "+1-555-1111",
-    "address": "1616 Peach Blvd, Sunset",
-    "debit": 299.1
-  },
-  {
-    "name": "Grace",
-    "surname": "Lee",
-    "tc_no": "23434567890",
-    "tax_no": "8876543210",
-    "tel_no": "+1-555-8888",
-    "address": "1717 Mango St, Sunset",
-    "debit": 125.4
+    "owners": [
+      {
+        "address": "123 Main Street, Istanbul",
+        "company_name": "Turk Motors",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "ahmet@example.com",
+        "full_name": "Ahmet Yilmaz",
+        "national_id": "12345678901",
+        "owner_id": "owner_1",
+        "owner_type": "business",
+        "phone_number": "+90 532 123 4567",
+        "profile_photo_url": "",
+        "tax_id": "9876543210",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["34 ABC 123", "34 XYZ 789"]
+      },
+      {
+        "address": "456 Park Avenue, Ankara",
+        "company_name": "",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "ayse@example.com",
+        "full_name": "Ayse Demir",
+        "national_id": "23456789012",
+        "owner_id": "owner_2",
+        "owner_type": "individual",
+        "phone_number": "+90 533 234 5678",
+        "profile_photo_url": "",
+        "tax_id": "8765432109",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["06 DEF 456"]
+      },
+      {
+        "address": "789 Business Center, Izmir",
+        "company_name": "Fleet Masters",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "mehmet@fleetmasters.com",
+        "full_name": "Mehmet Kaya",
+        "national_id": "34567890123",
+        "owner_id": "owner_3",
+        "owner_type": "business",
+        "phone_number": "+90 534 345 6789",
+        "profile_photo_url": "",
+        "tax_id": "7654321098",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["35 GHI 789", "35 JKL 012", "35 MNO 345"]
+      },
+      {
+        "address": "321 Side Street, Bursa",
+        "company_name": "",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "fatma@example.com",
+        "full_name": "Fatma Ozturk",
+        "national_id": "45678901234",
+        "owner_id": "owner_4",
+        "owner_type": "individual",
+        "phone_number": "+90 535 456 7890",
+        "profile_photo_url": "",
+        "tax_id": "6543210987",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["16 PQR 678"]
+      },
+      {
+        "address": "654 Industrial Zone, Antalya",
+        "company_name": "Antalya Logistics",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "ali@antalyalogistics.com",
+        "full_name": "Ali Yildiz",
+        "national_id": "56789012345",
+        "owner_id": "owner_5",
+        "owner_type": "business",
+        "phone_number": "+90 536 567 8901",
+        "profile_photo_url": "",
+        "tax_id": "5432109876",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["07 STU 901", "07 VWX 234"]
+      },
+      {
+        "address": "987 Tech Park, Istanbul",
+        "company_name": "Tech Fleet Services",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "can@techfleet.com",
+        "full_name": "Can Tekin",
+        "national_id": "67890123456",
+        "owner_id": "owner_6",
+        "owner_type": "business",
+        "phone_number": "+90 537 678 9012",
+        "profile_photo_url": "",
+        "tax_id": "4321098765",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["34 YZA 567", "34 BCD 890"]
+      },
+      {
+        "address": "234 Residential Area, Izmir",
+        "company_name": "",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "zeynep@example.com",
+        "full_name": "Zeynep Aydin",
+        "national_id": "78901234567",
+        "owner_id": "owner_7",
+        "owner_type": "individual",
+        "phone_number": "+90 538 789 0123",
+        "profile_photo_url": "",
+        "tax_id": "3210987654",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["35 EFG 123"]
+      },
+      {
+        "address": "567 Commercial District, Ankara",
+        "company_name": "Capital Auto Group",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "murat@capitalgroup.com",
+        "full_name": "Murat Ozkan",
+        "national_id": "89012345678",
+        "owner_id": "owner_8",
+        "owner_type": "business",
+        "phone_number": "+90 539 890 1234",
+        "profile_photo_url": "",
+        "tax_id": "2109876543",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["06 HIJ 456", "06 KLM 789"]
+      },
+      {
+        "address": "890 Marina Road, Bodrum",
+        "company_name": "",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "deniz@example.com",
+        "full_name": "Deniz Yilmaz",
+        "national_id": "90123456789",
+        "owner_id": "owner_9",
+        "owner_type": "individual",
+        "phone_number": "+90 530 901 2345",
+        "profile_photo_url": "",
+        "tax_id": "1098765432",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["48 NOP 012"]
+      },
+      {
+        "address": "123 Transport Hub, Mersin",
+        "company_name": "Mediterranean Transport Co.",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "kemal@medtransport.com",
+        "full_name": "Kemal Sahin",
+        "national_id": "01234567890",
+        "owner_id": "owner_10",
+        "owner_type": "business",
+        "phone_number": "+90 531 012 3456",
+        "profile_photo_url": "",
+        "tax_id": "0987654321",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["33 QRS 345", "33 TUV 678"]
+      },
+      {
+        "address": "456 City Center, Eskisehir",
+        "company_name": "",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "selin@example.com",
+        "full_name": "Selin Arslan",
+        "national_id": "12345098765",
+        "owner_id": "owner_11",
+        "owner_type": "individual",
+        "phone_number": "+90 532 123 4567",
+        "profile_photo_url": "",
+        "tax_id": "9876509876",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["26 WXY 901"]
+      },
+      {
+        "address": "789 Industrial Estate, Kocaeli",
+        "company_name": "East Marmara Logistics",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "hakan@eastmarmara.com",
+        "full_name": "Hakan Demir",
+        "national_id": "23456109876",
+        "owner_id": "owner_12",
+        "owner_type": "business",
+        "phone_number": "+90 533 234 5678",
+        "profile_photo_url": "",
+        "tax_id": "8765098765",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["41 ZAB 234", "41 CDE 567"]
+      },
+      {
+        "address": "321 Beach Road, Alanya",
+        "company_name": "",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "berk@example.com",
+        "full_name": "Berk Yildirim",
+        "national_id": "34567210987",
+        "owner_id": "owner_13",
+        "owner_type": "individual",
+        "phone_number": "+90 534 345 6789",
+        "profile_photo_url": "",
+        "tax_id": "7654087654",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["07 FGH 890"]
+      },
+      {
+        "address": "654 Business Plaza, Gaziantep",
+        "company_name": "South East Motors",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "emre@semotors.com",
+        "full_name": "Emre Kaya",
+        "national_id": "45678321098",
+        "owner_id": "owner_14",
+        "owner_type": "business",
+        "phone_number": "+90 535 456 7890",
+        "profile_photo_url": "",
+        "tax_id": "6543076543",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["27 IJK 123", "27 LMN 456"]
+      },
+      {
+        "address": "987 University Ave, Konya",
+        "company_name": "",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "elif@example.com",
+        "full_name": "Elif Celik",
+        "national_id": "56789432109",
+        "owner_id": "owner_15",
+        "owner_type": "individual",
+        "phone_number": "+90 536 567 8901",
+        "profile_photo_url": "",
+        "tax_id": "5432065432",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["42 OPQ 789"]
+      },
+      {
+        "address": "234 Trade Center, Samsun",
+        "company_name": "Black Sea Transport",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "burak@bstransport.com",
+        "full_name": "Burak Aydin",
+        "national_id": "67890543210",
+        "owner_id": "owner_16",
+        "owner_type": "business",
+        "phone_number": "+90 537 678 9012",
+        "profile_photo_url": "",
+        "tax_id": "4321054321",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["55 RST 012", "55 UVW 345"]
+      },
+      {
+        "address": "567 Highland Road, Trabzon",
+        "company_name": "",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "yasemin@example.com",
+        "full_name": "Yasemin Koc",
+        "national_id": "78901654321",
+        "owner_id": "owner_17",
+        "owner_type": "individual",
+        "phone_number": "+90 538 789 0123",
+        "profile_photo_url": "",
+        "tax_id": "3210943210",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["61 XYZ 678"]
+      },
+      {
+        "address": "890 Industry Zone, Denizli",
+        "company_name": "Aegean Fleet Services",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "serkan@aegeanfleet.com",
+        "full_name": "Serkan Ozturk",
+        "national_id": "89012765432",
+        "owner_id": "owner_18",
+        "owner_type": "business",
+        "phone_number": "+90 539 890 1234",
+        "profile_photo_url": "",
+        "tax_id": "2109832109",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["20 ABC 901", "20 DEF 234"]
+      },
+      {
+        "address": "123 Valley View, Kayseri",
+        "company_name": "",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "merve@example.com",
+        "full_name": "Merve Yilmaz",
+        "national_id": "90123876543",
+        "owner_id": "owner_19",
+        "owner_type": "individual",
+        "phone_number": "+90 530 901 2345",
+        "profile_photo_url": "",
+        "tax_id": "1098721098",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["38 GHI 567"]
+      },
+      {
+        "address": "456 Logistics Park, Adana",
+        "company_name": "South Transport Solutions",
+        "created_at": ${DateTime.now().millisecondsSinceEpoch},
+        "email": "onur@southtransport.com",
+        "full_name": "Onur Sahin",
+        "national_id": "01234987654",
+        "owner_id": "owner_20",
+        "owner_type": "business",
+        "phone_number": "+90 531 012 3456",
+        "profile_photo_url": "",
+        "tax_id": "0987610987",
+        "updated_at": ${DateTime.now().millisecondsSinceEpoch},
+        "vehicles": ["01 JKL 890", "01 MNO 123"]
+      }
+    ]
   }
-]
-} """;
-
-  static String workOrdersData = """ {"work_orders" : [
-  {
-    "customer_name": "Ahmet Yılmaz",
-    "repairman_name": "Mehmet Demir",
-    "repairman_id": "rmp-10293",
-    "customer_tc_no": "12345678901",
-    "tel_no": "+90 532 123 4567",
-    "plate_no": "34 ABC 123",
-    "work_state": {
-      "state": "working",
-      "time": 1735073000000
-    }
-  },
-  {
-    "customer_name": "Zeynep Kaya",
-    "repairman_name": "Ali Vural",
-    "repairman_id": "rmp-20876",
-    "customer_tc_no": "23456789012",
-    "tel_no": "+90 533 987 6543",
-    "plate_no": "06 DEF 456",
-    "work_state": {
-      "state": "registered",
-      "time": 1740053200000
-    }
-  },
-  {
-    "customer_name": "Mert Aksoy",
-    "repairman_name": "Cem Yılmaz",
-    "repairman_id": "rmp-34567",
-    "customer_tc_no": "34567890123",
-    "tel_no": "+90 534 654 3210",
-    "plate_no": "35 GHI 789",
-    "work_state": {
-      "state": "done",
-      "time": 1744988700000
-    }
-  },
-  {
-    "customer_name": "Elif Demirtaş",
-    "repairman_name": "Hakan Öz",
-    "repairman_id": "rmp-98234",
-    "customer_tc_no": "45678901234",
-    "tel_no": "+90 535 123 7890",
-    "plate_no": "41 JKL 321",
-    "work_state": {
-      "state": "testing",
-      "time": 1745061000000
-    }
-  },
-  {
-    "customer_name": "Burak Koç",
-    "repairman_name": "Tuna Gürel",
-    "repairman_id": "rmp-44512",
-    "customer_tc_no": "56789012345",
-    "tel_no": "+90 536 456 7890",
-    "plate_no": "42 MNO 654",
-    "work_state": {
-      "state": "registered",
-      "time": 1745082000000
-    }
-  },
-  {
-    "customer_name": "Sena Bayraktar",
-    "repairman_name": "Ömer Faruk",
-    "repairman_id": "rmp-67281",
-    "customer_tc_no": "67890123456",
-    "tel_no": "+90 537 321 4567",
-    "plate_no": "01 PQR 987",
-    "work_state": {
-      "state": "working",
-      "time": 1745094000000
-    }
-  },
-  {
-    "customer_name": "Emre Tunç",
-    "repairman_name": "Barış Şahin",
-    "repairman_id": "rmp-18364",
-    "customer_tc_no": "78901234567",
-    "tel_no": "+90 538 654 9870",
-    "plate_no": "07 STU 111",
-    "work_state": {
-      "state": "done",
-      "time": 1745000000000
-    }
-  },
-  {
-    "customer_name": "Nazlı Ay",
-    "repairman_name": "Kerem Bulut",
-    "repairman_id": "rmp-92034",
-    "customer_tc_no": "89012345678",
-    "tel_no": "+90 539 987 0000",
-    "plate_no": "33 VWX 222",
-    "work_state": {
-      "state": "testing",
-      "time": 1745033000000
-    }
-  },
-  {
-    "customer_name": "Umut Aydın",
-    "repairman_name": "Salih İnce",
-    "repairman_id": "rmp-83745",
-    "customer_tc_no": "90123456789",
-    "tel_no": "+90 530 222 3333",
-    "plate_no": "27 YZA 333",
-    "work_state": {
-      "state": "working",
-      "time": 1745078000000
-    }
-  },
-  {
-    "customer_name": "Gülşah Akın",
-    "repairman_name": "Murat Polat",
-    "repairman_id": "rmp-76541",
-    "customer_tc_no": "11223344556",
-    "tel_no": "+90 531 111 2222",
-    "plate_no": "10 BCD 444",
-    "work_state": {
-      "state": "done",
-      "time": 1744900000000
-    }
-  }
-]
-} """;
+  """;
 }

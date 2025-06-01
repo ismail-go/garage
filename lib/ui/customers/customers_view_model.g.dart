@@ -65,6 +65,15 @@ mixin _$CustomersViewModel on _CustomersViewModel, Store {
     return _$loadCustomersAsyncAction.run(() => super.loadCustomers());
   }
 
+  late final _$deleteCustomerAsyncAction =
+      AsyncAction('_CustomersViewModel.deleteCustomer', context: context);
+
+  @override
+  Future<void> deleteCustomer(String nationalId) {
+    return _$deleteCustomerAsyncAction
+        .run(() => super.deleteCustomer(nationalId));
+  }
+
   @override
   String toString() {
     return '''

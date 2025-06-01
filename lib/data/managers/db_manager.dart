@@ -29,39 +29,11 @@ abstract class _DbManager with Store {
       final QuerySnapshot snapshot = await _firestore.collection('owners').get();
       customers = snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-        return Customer(
-          address: data['address'] ?? '',
-          companyName: data['company_name'] ?? '',
-          createdAt: data['created_at'] ?? 0,
-          email: data['email'] ?? '',
-          fullName: data['full_name'] ?? '',
-          nationalId: data['national_id'] ?? '',
-          ownerId: data['owner_id'] ?? '',
-          ownerType: data['owner_type'] ?? '',
-          phoneNumber: data['phone_number'] ?? '',
-          profilePhotoUrl: data['profile_photo_url'] ?? '',
-          taxId: data['tax_id'] ?? '',
-          updatedAt: data['updated_at'] ?? 0,
-          vehicles: List<String>.from(data['vehicles'] ?? []),
-        );
+        return Customer.fromJson(data);
       }).toList();
     } catch (e) {
       print('Error fetching owners: $e');
       customers = [];
-    }
-  }
-
-  Future<void> _addSampleCustomers() async {
-    try {
-      final Map<String, dynamic> sampleData = json.decode(FakeData.customerData);
-      final List<dynamic> sampleCustomers = sampleData['customers'];
-      
-      for (var customerData in sampleCustomers) {
-        await _firestore.collection('customers').add(customerData);
-      }
-      print('Sample customers added successfully');
-    } catch (e) {
-      print('Error adding sample customers: $e');
     }
   }
 
@@ -166,6 +138,10 @@ abstract class _DbManager with Store {
       if (snapshot.docs.isNotEmpty) {
         await snapshot.docs.first.reference.delete();
         customers = customers.where((c) => c.nationalId != nationalId).toList();
+        // Force a refresh of the customers list if it's empty
+        if (customers.isEmpty) {
+          await initCustomers();
+        }
       }
     } catch (e) {
       print('Error deleting customer: $e');
@@ -208,5 +184,31 @@ abstract class _DbManager with Store {
         return WorkOrder.fromJson(data);
       }).toList();
     });
+  }
+
+  // Add sample owners to Firestore
+  Future<void> addSampleOwners() async {
+    try {
+      final Map<String, dynamic> sampleData = json.decode(FakeData.ownersData);
+      final List<dynamic> sampleOwners = sampleData['owners'];
+      
+      // Delete existing owners first
+      final QuerySnapshot existingOwners = await _firestore.collection('owners').get();
+      for (var doc in existingOwners.docs) {
+        await doc.reference.delete();
+      }
+      
+      // Add new sample owners
+      for (var ownerData in sampleOwners) {
+        final customer = Customer.fromJson(ownerData as Map<String, dynamic>);
+        await _firestore.collection('owners').doc(customer.ownerId).set(customer.toJson());
+      }
+      print('Sample owners added successfully');
+      
+      // Refresh the customers list
+      await initCustomers();
+    } catch (e) {
+      print('Error adding sample owners: $e');
+    }
   }
 }

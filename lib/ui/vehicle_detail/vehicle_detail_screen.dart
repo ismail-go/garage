@@ -32,6 +32,7 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
     return Scaffold(
       extendBodyBehindAppBar: true, // Added for blur effect
       appBar: BlurredAppBar( // Replaced AppBar
+        leading: BackButton(color: Colors.white),
         title: Text('Vehicle Details'),
         actions: <Widget>[
           Observer(
@@ -40,8 +41,7 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
                 return SizedBox.shrink();
               }
               return IconButton(
-                icon: Icon(Icons.edit),
-                // color: appBarIconColor, // Reverted: Removed explicit color
+                icon: Icon(Icons.edit, color: Colors.white),
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,

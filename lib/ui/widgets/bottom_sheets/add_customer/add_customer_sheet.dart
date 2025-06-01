@@ -22,106 +22,191 @@ class AddCustomerBottomSheet extends StatefulWidget {
 class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCustomerBottomSheet> {
   _AddCustomerBottomSheetState(super.viewModel);
 
+  // Focus nodes for auto focus navigation
+  final _fullNameFocus = FocusNode();
+  final _companyFocus = FocusNode();
+  final _emailFocus = FocusNode();
+  final _phoneFocus = FocusNode();
+  final _nationalIdFocus = FocusNode();
+  final _taxIdFocus = FocusNode();
+  final _addressFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _fullNameFocus.dispose();
+    _companyFocus.dispose();
+    _emailFocus.dispose();
+    _phoneFocus.dispose();
+    _nationalIdFocus.dispose();
+    _taxIdFocus.dispose();
+    _addressFocus.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BaseBottomSheet(
-      child: Form(
-        key: viewModel.formKey,
-        child: Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  widget.customer != null ? 'Edit Customer' : 'Add Customer',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+    final isEditing = widget.customer != null;
+    return Padding(
+      padding: MediaQuery.of(context).viewInsets, // Keyboard-aware
+      child: DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        expand: false,
+        builder: (context, scrollController) => Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).canvasColor,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          child: Form(
+            key: viewModel.formKey,
+            child: SingleChildScrollView(
+              controller: scrollController,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            isEditing ? 'Edit Customer' : 'Add Customer',
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    _inputField(
+                      label: 'Full Name',
+                      initialValue: widget.customer?.fullName,
+                      onSave: (value) {
+                        viewModel.fullName = value ?? "";
+                      },
+                      validator: (value) => (value == null || value.isEmpty) ? 'Full Name is required' : null,
+                      focusNode: _fullNameFocus,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_companyFocus),
+                    ),
+                    const SizedBox(height: 12),
+                    _inputField(
+                      label: 'Company Name',
+                      initialValue: widget.customer?.companyName,
+                      onSave: (value) {
+                        viewModel.companyName = value ?? "";
+                      },
+                      focusNode: _companyFocus,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_emailFocus),
+                    ),
+                    const SizedBox(height: 12),
+                    _inputField(
+                      label: 'Email',
+                      initialValue: widget.customer?.email,
+                      onSave: (value) {
+                        viewModel.email = value ?? "";
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) return 'Email is required';
+                        final emailRegex = RegExp(r"^[a-zA-Z0-9.!#\$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*");
+                        if (!emailRegex.hasMatch(value)) {
+                          return 'Enter a valid email';
+                        }
+                        return null;
+                      },
+                      focusNode: _emailFocus,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_phoneFocus),
+                    ),
+                    const SizedBox(height: 12),
+                    _inputField(
+                      label: 'Phone Number',
+                      initialValue: widget.customer?.phoneNumber,
+                      keyboardType: TextInputType.phone,
+                      onSave: (value) {
+                        viewModel.phoneNumber = value ?? "";
+                      },
+                      validator: (value) => (value == null || value.isEmpty) ? 'Phone number is required' : null,
+                      focusNode: _phoneFocus,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_nationalIdFocus),
+                    ),
+                    const SizedBox(height: 12),
+                    _inputField(
+                      label: 'National ID',
+                      initialValue: widget.customer?.nationalId,
+                      keyboardType: TextInputType.number,
+                      onSave: (value) {
+                        viewModel.nationalId = value ?? "";
+                      },
+                      focusNode: _nationalIdFocus,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_taxIdFocus),
+                    ),
+                    const SizedBox(height: 12),
+                    _inputField(
+                      label: 'Tax ID',
+                      initialValue: widget.customer?.taxId,
+                      keyboardType: TextInputType.number,
+                      onSave: (value) {
+                        viewModel.taxId = value ?? "";
+                      },
+                      focusNode: _taxIdFocus,
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_addressFocus),
+                    ),
+                    const SizedBox(height: 12),
+                    _inputField(
+                      label: 'Address',
+                      initialValue: widget.customer?.address,
+                      maxLines: 3,
+                      onSave: (value) {
+                        viewModel.address = value ?? "";
+                      },
+                      focusNode: _addressFocus,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => FocusScope.of(context).unfocus(),
+                    ),
+                    const SizedBox(height: 24),
+                    Observer(
+                      builder: (_) {
+                        return SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: viewModel.isSaving ? null : () => viewModel.onTapSave(context),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            ),
+                            child: viewModel.isSaving
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                  )
+                                : Text(isEditing ? 'Update' : 'Save'),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                 ),
-                SizedBox(height: 20),
-                _inputField(
-                  label: 'Full Name',
-                  initialValue: widget.customer?.fullName,
-                  onSave: (value) {
-                    viewModel.fullName = value ?? "";
-                  },
-                  validator: (value) => (value == null || value.isEmpty) ? 'Full Name is required' : null,
-                ),
-                SizedBox(height: 10),
-                _inputField(
-                  label: 'Company Name',
-                  initialValue: widget.customer?.companyName,
-                  onSave: (value) {
-                    viewModel.companyName = value ?? "";
-                  },
-                ),
-                SizedBox(height: 10),
-                _inputField(
-                  label: 'Email',
-                  initialValue: widget.customer?.email,
-                  onSave: (value) {
-                    viewModel.email = value ?? "";
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) return 'Email is required';
-                    if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
-                      return 'Enter a valid email';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                _inputField(
-                  label: 'Phone Number',
-                  initialValue: widget.customer?.phoneNumber,
-                  keyboardType: TextInputType.phone,
-                  onSave: (value) {
-                    viewModel.phoneNumber = value ?? "";
-                  },
-                  validator: (value) => (value == null || value.isEmpty) ? 'Phone number is required' : null,
-                ),
-                SizedBox(height: 10),
-                _inputField(
-                  label: 'National ID',
-                  initialValue: widget.customer?.nationalId,
-                  keyboardType: TextInputType.number,
-                  onSave: (value) {
-                    viewModel.nationalId = value ?? "";
-                  },
-                ),
-                SizedBox(height: 10),
-                _inputField(
-                  label: 'Tax ID',
-                  initialValue: widget.customer?.taxId,
-                  keyboardType: TextInputType.number,
-                  onSave: (value) {
-                    viewModel.taxId = value ?? "";
-                  },
-                ),
-                SizedBox(height: 10),
-                _inputField(
-                  label: 'Address',
-                  initialValue: widget.customer?.address,
-                  maxLines: 3,
-                  onSave: (value) {
-                    viewModel.address = value ?? "";
-                  },
-                ),
-                SizedBox(height: 20),
-                Observer(
-                  builder: (_) {
-                    return ElevatedButton(
-                      onPressed: viewModel.isSaving ? null : () => viewModel.onTapSave(context),
-                      child: viewModel.isSaving
-                          ? SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                            )
-                          : Text(widget.customer != null ? 'Update' : 'Save'),
-                    );
-                  },
-                ),
-                SizedBox(height: 20),
-              ],
+              ),
             ),
           ),
         ),
@@ -136,6 +221,9 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
     TextInputType? keyboardType,
     int? maxLines,
     String? Function(String?)? validator,
+    FocusNode? focusNode,
+    TextInputAction? textInputAction,
+    void Function(String)? onFieldSubmitted,
   }) {
     return TextFormField(
       decoration: InputDecoration(
@@ -149,6 +237,9 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
       maxLines: maxLines ?? 1,
       onSaved: onSave,
       validator: validator,
+      focusNode: focusNode,
+      textInputAction: textInputAction,
+      onFieldSubmitted: onFieldSubmitted,
     );
   }
 }

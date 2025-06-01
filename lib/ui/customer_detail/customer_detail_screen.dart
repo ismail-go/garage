@@ -33,6 +33,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: BlurredAppBar(
+        leading: BackButton(color: Colors.white),
         actions: <Widget>[
           Observer(
             builder: (_) {
@@ -43,7 +44,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
                   );
               }
               if (viewModel.customer == null) {
-                return IconButton(icon: Icon(Icons.edit_off), onPressed: null);
+                return IconButton(icon: Icon(Icons.edit_off, color: Colors.white), onPressed: null);
               }
               if (viewModel.isLoading && !viewModel.isProcessingCustomerDeletion) { 
                  return Padding(
@@ -52,7 +53,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
                   );
               }
               return IconButton(
-                icon: Icon(Icons.edit),
+                icon: Icon(Icons.edit, color: Colors.white),
                 onPressed: () {
                   if (viewModel.customer != null) {
                     showModalBottomSheet(

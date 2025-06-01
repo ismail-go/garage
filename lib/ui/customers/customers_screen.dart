@@ -112,46 +112,78 @@ class _CustomersScreenState
   }
 
   Widget _customerItem(Customer customer) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 4),
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12))),
-      color: Colors.grey.shade200,
-      shadowColor: Colors.transparent,
-      child: ListTile(
-        onTap: () async {
-          final customerDetailViewModel = CustomerDetailViewModel(
-            customer.ownerId,
-          );
-
-          Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => CustomerDetailScreen(
-                viewModel: customerDetailViewModel,
+    return Column(
+      children: [
+        InkWell(
+          onTap: () async {
+            final customerDetailViewModel = CustomerDetailViewModel(customer.ownerId);
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => CustomerDetailScreen(
+                  viewModel: customerDetailViewModel,
+                ),
               ),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10.0),
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.grey.shade300,
+                    image: customer.profilePhotoUrl.isNotEmpty
+                        ? DecorationImage(
+                            image: NetworkImage(customer.profilePhotoUrl),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child: customer.profilePhotoUrl.isEmpty
+                      ? Icon(Icons.person, color: Colors.grey.shade500, size: 28)
+                      : null,
+                ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        customer.fullName,
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        customer.companyName.isNotEmpty
+                            ? customer.companyName
+                            : customer.phoneNumber,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.grey[600],
+                            ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(Icons.chevron_right, color: Colors.grey[400], size: 24),
+              ],
             ),
-          );
-        },
-        leading: CircleAvatar(
-          backgroundColor: Colors.grey.shade300,
-          backgroundImage: customer.profilePhotoUrl.isNotEmpty
-              ? NetworkImage(customer.profilePhotoUrl)
-              : null,
-          child: customer.profilePhotoUrl.isEmpty
-              ? Icon(Icons.person, color: Colors.black38)
-              : null,
+          ),
         ),
-        title: Text(customer.fullName),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (customer.companyName.isNotEmpty) Text(customer.companyName),
-            Text(customer.phoneNumber),
-          ],
+        Padding(
+          padding: const EdgeInsets.only(left: 72.0, right: 8.0),
+          child: Divider(height: 1, color: Colors.grey[200]),
         ),
-        trailing: Icon(Icons.chevron_right),
-      ),
+      ],
     );
   }
 

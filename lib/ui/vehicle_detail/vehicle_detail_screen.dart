@@ -6,6 +6,7 @@ import 'package:garage/ui/vehicle_detail/vehicle_detail_view_model.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_vehicle/add_vehicle_sheet.dart'; // Import AddVehicleBottomSheet
 import 'package:garage/ui/widgets/custom_bars/blurred_app_bar.dart'; // Added import
 import 'package:intl/intl.dart'; // For date formatting
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class VehicleDetailScreen extends StatefulWidget {
   final VehicleDetailViewModel viewModel;
@@ -73,7 +74,7 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
                 children: [
                   CircularProgressIndicator(),
                   SizedBox(height: 16),
-                  Text("Deleting Vehicle..."),
+                  Text(AppLocalizations.of(context)!.deletingVehicle),
                 ],
               )
             );
@@ -118,12 +119,12 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
                       textAlign: TextAlign.center,
                     ),
                     SelectableText(
-                      'Year: ${vehicle.year}',
+                      AppLocalizations.of(context)!.year + ': ${vehicle.year}',
                       style: Theme.of(context).textTheme.titleMedium,
                       textAlign: TextAlign.center,
                     ),
                     SelectableText(
-                      'Plate: ${vehicle.plateNo}',
+                      AppLocalizations.of(context)!.plateNumber + ': ${vehicle.plateNo}',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(fontStyle: FontStyle.italic),
                       textAlign: TextAlign.center,
                     ),
@@ -138,12 +139,12 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildDetailRow(context, 'Kilometers', '${vehicle.kilometer} km'),
-                      _buildDetailRow(context, 'Fuel Type', vehicle.fuelType),
-                      _buildDetailRow(context, 'Last Service', _formatTimestamp(vehicle.lastServiceDate)),
-                      _buildDetailRow(context, 'Next Service Due', _formatTimestamp(vehicle.nextServiceDue)),
-                      _buildDetailRow(context, 'Created At', _formatTimestamp(vehicle.createdAt)),
-                      _buildDetailRow(context, 'Updated At', _formatTimestamp(vehicle.updatedAt)),
+                      _buildDetailRow(context, AppLocalizations.of(context)!.kilometer, '${vehicle.kilometer} km'),
+                      _buildDetailRow(context, AppLocalizations.of(context)!.fuelType, vehicle.fuelType),
+                      _buildDetailRow(context, AppLocalizations.of(context)!.lastService, _formatTimestamp(vehicle.lastServiceDate)),
+                      _buildDetailRow(context, AppLocalizations.of(context)!.nextServiceDue, _formatTimestamp(vehicle.nextServiceDue)),
+                      _buildDetailRow(context, AppLocalizations.of(context)!.createdAt, _formatTimestamp(vehicle.createdAt)),
+                      _buildDetailRow(context, AppLocalizations.of(context)!.updatedAt, _formatTimestamp(vehicle.updatedAt)),
                     ],
                   ),
                 ),
@@ -164,7 +165,7 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
         width: double.infinity,
         child: ElevatedButton.icon(
           icon: Icon(Icons.delete_forever, color: Colors.white),
-          label: Text('Delete Vehicle', style: TextStyle(color: Colors.white)),
+          label: Text(AppLocalizations.of(context)!.deleteVehicle, style: TextStyle(color: Colors.white)),
           onPressed: () => _showDeleteVehicleConfirmationDialog(context, vehicle),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red[700],
@@ -182,17 +183,17 @@ class _VehicleDetailScreenState extends BaseState<VehicleDetailViewModel, Vehicl
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('Confirm Deletion'),
-          content: Text('Are you sure you want to delete this vehicle (${vehicle.manufacturer} ${vehicle.model}) and all its associated work orders? This action cannot be undone.'),
+          title: Text(AppLocalizations.of(context)!.confirmDeletion),
+          content: Text(AppLocalizations.of(context)!.deleteVehicleConfirm('${vehicle.manufacturer} ${vehicle.model}')),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(dialogContext).pop(); // Dismiss dialog
               },
             ),
             TextButton(
-              child: Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Colors.red)),
               onPressed: () async {
                 Navigator.of(dialogContext).pop(); // Dismiss dialog first
                 

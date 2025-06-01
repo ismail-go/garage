@@ -4,6 +4,7 @@ import 'package:garage/core/base/base_state.dart';
 import 'package:garage/data/model/customer/customer.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_view_model.dart';
 import 'package:garage/ui/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddCustomerBottomSheet extends StatefulWidget {
   final Future<void> Function(Customer customer) onAddCustomer;
@@ -80,7 +81,7 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
                       children: [
                         Expanded(
                           child: Text(
-                            isEditing ? 'Edit Customer' : 'Add Customer',
+                            isEditing ? AppLocalizations.of(context)!.editCustomer : AppLocalizations.of(context)!.addCustomer,
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -92,19 +93,19 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
                     ),
                     const SizedBox(height: 12),
                     _inputField(
-                      label: 'Full Name',
+                      label: AppLocalizations.of(context)!.fullName,
                       initialValue: widget.customer?.fullName,
                       onSave: (value) {
                         viewModel.fullName = value ?? "";
                       },
-                      validator: (value) => (value == null || value.isEmpty) ? 'Full Name is required' : null,
+                      validator: (value) => (value == null || value.isEmpty) ? AppLocalizations.of(context)!.fullName + ' ' + AppLocalizations.of(context)!.save.toLowerCase() + ' ' + AppLocalizations.of(context)!.cancel.toLowerCase() : null,
                       focusNode: _fullNameFocus,
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_companyFocus),
                     ),
                     const SizedBox(height: 12),
                     _inputField(
-                      label: 'Company Name',
+                      label: AppLocalizations.of(context)!.companyName,
                       initialValue: widget.customer?.companyName,
                       onSave: (value) {
                         viewModel.companyName = value ?? "";
@@ -115,7 +116,7 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
                     ),
                     const SizedBox(height: 12),
                     _inputField(
-                      label: 'Email',
+                      label: AppLocalizations.of(context)!.email,
                       initialValue: widget.customer?.email,
                       onSave: (value) {
                         viewModel.email = value ?? "";
@@ -134,13 +135,13 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
                     ),
                     const SizedBox(height: 12),
                     _inputField(
-                      label: 'Phone Number',
+                      label: AppLocalizations.of(context)!.phoneNumber,
                       initialValue: widget.customer?.phoneNumber,
                       keyboardType: TextInputType.phone,
                       onSave: (value) {
                         viewModel.phoneNumber = value ?? "";
                       },
-                      validator: (value) => (value == null || value.isEmpty) ? 'Phone number is required' : null,
+                      validator: (value) => (value == null || value.isEmpty) ? AppLocalizations.of(context)!.phoneNumber + ' ' + AppLocalizations.of(context)!.save.toLowerCase() + ' ' + AppLocalizations.of(context)!.cancel.toLowerCase() : null,
                       focusNode: _phoneFocus,
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_nationalIdFocus),
@@ -198,7 +199,7 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
                                     width: 20,
                                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                                   )
-                                : Text(isEditing ? 'Update' : 'Save'),
+                                : Text(isEditing ? AppLocalizations.of(context)!.update : AppLocalizations.of(context)!.save),
                           ),
                         );
                       },

@@ -5,6 +5,7 @@ import 'package:garage/data/managers/route_manager.dart';
 import 'package:garage/data/model/work_order/work_order.dart';
 import 'package:garage/gen/assets.gen.dart';
 import 'package:garage/ui/home/home_view_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,7 +35,7 @@ class HomeScreenState extends BaseState<HomeViewModel, HomeScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16.0),
-          child: Text("İş Emirleri", style: Theme.of(context).textTheme.titleMedium),
+          child: Text(AppLocalizations.of(context)!.workOrders, style: Theme.of(context).textTheme.titleMedium),
         ),
         ...List.generate(viewModel.workOrders.length, (index) => _workOrderCardItem(viewModel.workOrders[index]))
       ],
@@ -99,7 +100,7 @@ class HomeScreenState extends BaseState<HomeViewModel, HomeScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.only(left: 16.0),
-          child: Text("En Uygun Kart", style: Theme.of(context).textTheme.titleMedium),
+          child: Text(AppLocalizations.of(context)!.bestCard, style: Theme.of(context).textTheme.titleMedium),
         ),
         Card(
           child: Padding(
@@ -109,7 +110,7 @@ class HomeScreenState extends BaseState<HomeViewModel, HomeScreen> {
               children: [
                 Row(
                   children: [
-                    Text("Kart No: ", style: Theme.of(context).textTheme.titleMedium),
+                    Text(AppLocalizations.of(context)!.cardNumber, style: Theme.of(context).textTheme.titleMedium),
                     Text("1231 1231 2342 3424", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
                     Spacer(),
                     Icon(Icons.copy),
@@ -117,19 +118,19 @@ class HomeScreenState extends BaseState<HomeViewModel, HomeScreen> {
                 ),
                 Row(
                   children: [
-                    Text("Kart Tarih: ", style: Theme.of(context).textTheme.titleMedium),
+                    Text(AppLocalizations.of(context)!.cardDate, style: Theme.of(context).textTheme.titleMedium),
                     Text("12/03", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
                   ],
                 ),
                 Row(
                   children: [
-                    Text("Hesap Kesim Tarihi: ", style: Theme.of(context).textTheme.titleMedium),
+                    Text(AppLocalizations.of(context)!.accountCutoffDate, style: Theme.of(context).textTheme.titleMedium),
                     Text("12/03", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
                   ],
                 ),
                 Row(
                   children: [
-                    Text("Son Ödeme Tarihi: ", style: Theme.of(context).textTheme.titleMedium),
+                    Text(AppLocalizations.of(context)!.lastPaymentDate, style: Theme.of(context).textTheme.titleMedium),
                     Text("12/03", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.grey)),
                   ],
                 ),

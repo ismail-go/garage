@@ -5,6 +5,7 @@ import 'package:garage/core/base/base_state.dart';
 import 'package:garage/gen/assets.gen.dart';
 import 'package:garage/ui/work_order/work_order_view_model.dart';
 import 'package:timelines_plus/timelines_plus.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class WorkOrderScreen extends StatefulWidget {
   final WorkOrderViewModel viewModel;
@@ -82,7 +83,7 @@ class _WorkOrderScreenState extends BaseState<WorkOrderViewModel, WorkOrderScree
                     return Padding(
                       padding: const EdgeInsets.only(top: 15.0),
                       child: Text(
-                        viewModel.processes[index],
+                        AppLocalizations.of(context)!.workOrderProcess(index, viewModel.processes[index]),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: viewModel.getColor(index),

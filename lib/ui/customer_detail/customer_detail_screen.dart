@@ -12,6 +12,7 @@ import 'package:garage/ui/vehicle_detail/vehicle_detail_view_model.dart';
 import 'package:garage/ui/widgets/custom_bars/blurred_app_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CustomerDetailScreen extends StatefulWidget {
   final CustomerDetailViewModel viewModel;
@@ -75,7 +76,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
           if (viewModel.customer != null && viewModel.customer!.fullName.isNotEmpty) {
             return Text(viewModel.customer!.fullName);
           }
-          return Text("Customer Details");
+          return Text(AppLocalizations.of(context)!.customerDetails);
         }),
       ),
       body: Observer(builder: (_) {
@@ -83,16 +84,16 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
           return Center(child: CircularProgressIndicator());
         }
         if (viewModel.customerLoadingError != null) {
-          return Center(child: Text("Error: ${viewModel.customerLoadingError}"));
+          return Center(child: Text(AppLocalizations.of(context)!.error(viewModel.customerLoadingError!)));
         }
         if (viewModel.customer == null) {
           return Center(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Customer not found or has been deleted."),
+              Text(AppLocalizations.of(context)!.customerNotFound),
               SizedBox(height: 10),
-              ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: Text("Go Back"))
+              ElevatedButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppLocalizations.of(context)!.goBack))
             ],
           ));
         }
@@ -104,7 +105,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
             children: [
               CircularProgressIndicator(),
               SizedBox(height: 16),
-              Text("Deleting Customer..."),
+              Text(AppLocalizations.of(context)!.deletingCustomer),
             ],
           ));
         }
@@ -374,7 +375,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
           SizedBox(width: 16),
           Expanded(
             child: SelectableText(
-              value.isNotEmpty ? value : "N/A",
+              value.isNotEmpty ? value : AppLocalizations.of(context)!.nA,
               style: Theme.of(context).textTheme.titleSmall,
               textAlign: TextAlign.end,
             ),
@@ -396,7 +397,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
         width: double.infinity,
         child: ElevatedButton.icon(
           icon: Icon(Icons.delete_forever, color: Colors.white),
-          label: Text('Delete Customer and All Data', style: TextStyle(color: Colors.white)),
+          label: Text(AppLocalizations.of(context)!.deleteCustomer, style: TextStyle(color: Colors.white)),
           onPressed: () => _showDeleteConfirmationDialog(context, customer),
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.red[700],
@@ -414,18 +415,17 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
       context: context,
       builder: (BuildContext dialogContext) {
         return AlertDialog(
-          title: Text('Confirm Deletion'),
-          content: Text(
-              'Are you sure you want to delete this customer (${customer.fullName}) and all associated data (vehicles, work orders)? This action cannot be undone.'),
+          title: Text(AppLocalizations.of(context)!.confirmDeletion),
+          content: Text(AppLocalizations.of(context)!.deleteVehicleConfirm('${customer.fullName}')),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
               onPressed: () {
                 Navigator.of(dialogContext).pop();
               },
             ),
             TextButton(
-              child: Text('Delete', style: TextStyle(color: Colors.red)),
+              child: Text(AppLocalizations.of(context)!.delete, style: TextStyle(color: Colors.red)),
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
 
@@ -436,7 +436,7 @@ class _CustomerDetailScreenState extends BaseState<CustomerDetailViewModel, Cust
                   }
                 } else if (!success && mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error deleting customer. Please try again.')),
+                    SnackBar(content: Text(AppLocalizations.of(context)!.deleteCustomerError)),
                   );
                 }
               },

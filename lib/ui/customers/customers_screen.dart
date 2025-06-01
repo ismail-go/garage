@@ -6,6 +6,7 @@ import 'package:garage/data/model/customer/customer.dart';
 import 'package:garage/ui/customer_detail/customer_detail_screen.dart';
 import 'package:garage/ui/customers/customers_view_model.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_sheet.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import '../customer_detail/customer_detail_view_model.dart';
 
@@ -70,14 +71,14 @@ class _CustomersScreenState
               return SliverFillRemaining(
                   child: Center(
                       child:
-                          Text("Error loading customers. Please try again.")));
+                          Text(AppLocalizations.of(context)!.error('Error loading customers. Please try again.'))));
             }
 
             final allCustomers = snapshot.data;
 
             if (allCustomers == null || allCustomers.isEmpty) {
               return SliverFillRemaining(
-                  child: Center(child: Text('No customers found. Add one!')));
+                  child: Center(child: Text(AppLocalizations.of(context)!.nA)));
             }
 
             return Observer(builder: (context) {
@@ -88,7 +89,7 @@ class _CustomersScreenState
               if (filteredCustomers.isEmpty) {
                 return SliverFillRemaining(
                     child: Center(
-                        child: Text('No customers match your search.')));
+                        child: Text(AppLocalizations.of(context)!.nA)));
               }
               
               return SliverPadding(
@@ -226,7 +227,7 @@ class _CustomersScreenState
                     padding: const EdgeInsets.only(left: 8.0),
                     child: CupertinoButton(
                       padding: EdgeInsets.zero,
-                      child: Text('Cancel'),
+                      child: Text(AppLocalizations.of(context)!.cancel),
                       onPressed: () {
                         _searchController.clear();
                         viewModel.searchValue = '';

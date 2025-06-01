@@ -5,6 +5,7 @@ import 'package:garage/core/base/base_state.dart';
 import 'package:garage/data/model/vehicle/vehicle.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_vehicle/add_vehicle_view_model.dart';
 import 'package:garage/ui/widgets/bottom_sheets/base_bottom_sheet.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddVehicleBottomSheet extends StatefulWidget {
   final String ownerId;
@@ -84,7 +85,7 @@ class _AddVehicleBottomSheetState extends BaseState<AddVehicleViewModel, AddVehi
                       children: [
                         Expanded(
                           child: Text(
-                            isEditing ? 'Edit Vehicle' : 'Add New Vehicle',
+                            isEditing ? AppLocalizations.of(context)!.editVehicle : AppLocalizations.of(context)!.addVehicle,
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -96,41 +97,41 @@ class _AddVehicleBottomSheetState extends BaseState<AddVehicleViewModel, AddVehi
                     ),
                     const SizedBox(height: 12),
                     _inputField(
-                      label: 'Manufacturer',
+                      label: AppLocalizations.of(context)!.manufacturer,
                       initialValue: viewModel.manufacturer,
                       onSave: (value) => viewModel.manufacturer = value ?? '',
-                      validator: (value) => (value == null || value.isEmpty) ? 'Manufacturer is required' : null,
+                      validator: (value) => (value == null || value.isEmpty) ? AppLocalizations.of(context)!.manufacturer + ' ' + AppLocalizations.of(context)!.save.toLowerCase() + ' ' + AppLocalizations.of(context)!.cancel.toLowerCase() : null,
                       focusNode: _manufacturerFocus,
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_modelFocus),
                     ),
                     const SizedBox(height: 12),
                     _inputField(
-                      label: 'Model',
+                      label: AppLocalizations.of(context)!.model,
                       initialValue: viewModel.model,
                       onSave: (value) => viewModel.model = value ?? '',
-                      validator: (value) => (value == null || value.isEmpty) ? 'Model is required' : null,
+                      validator: (value) => (value == null || value.isEmpty) ? AppLocalizations.of(context)!.model + ' ' + AppLocalizations.of(context)!.save.toLowerCase() + ' ' + AppLocalizations.of(context)!.cancel.toLowerCase() : null,
                       focusNode: _modelFocus,
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_yearFocus),
                     ),
                     const SizedBox(height: 12),
                     _inputField(
-                      label: 'Year',
+                      label: AppLocalizations.of(context)!.year,
                       initialValue: viewModel.year,
                       keyboardType: TextInputType.number,
                       onSave: (value) => viewModel.year = value ?? '',
-                      validator: (value) => (value == null || value.isEmpty) ? 'Year is required' : null,
+                      validator: (value) => (value == null || value.isEmpty) ? AppLocalizations.of(context)!.year + ' ' + AppLocalizations.of(context)!.save.toLowerCase() + ' ' + AppLocalizations.of(context)!.cancel.toLowerCase() : null,
                       focusNode: _yearFocus,
                       textInputAction: TextInputAction.next,
                       onFieldSubmitted: (_) => FocusScope.of(context).requestFocus(_plateFocus),
                     ),
                     const SizedBox(height: 12),
                     _inputField(
-                      label: 'Plate Number',
+                      label: AppLocalizations.of(context)!.plateNumber,
                       initialValue: viewModel.plateNo,
                       onSave: (value) => viewModel.plateNo = value ?? '',
-                      validator: (value) => (value == null || value.isEmpty) ? 'Plate number is required' : null,
+                      validator: (value) => (value == null || value.isEmpty) ? AppLocalizations.of(context)!.plateNumber + ' ' + AppLocalizations.of(context)!.save.toLowerCase() + ' ' + AppLocalizations.of(context)!.cancel.toLowerCase() : null,
                       focusNode: _plateFocus,
                       textInputAction: isEditing ? TextInputAction.next : TextInputAction.next,
                       onFieldSubmitted: (_) {
@@ -144,7 +145,7 @@ class _AddVehicleBottomSheetState extends BaseState<AddVehicleViewModel, AddVehi
                     if (viewModel.originalVehicle != null) ...[
                       const SizedBox(height: 12),
                       _inputField(
-                        label: 'VIN (Vehicle Identification Number)',
+                        label: AppLocalizations.of(context)!.vin,
                         initialValue: viewModel.vin,
                         readOnly: true,
                         onSave: (value) {},
@@ -155,7 +156,7 @@ class _AddVehicleBottomSheetState extends BaseState<AddVehicleViewModel, AddVehi
                     ],
                     const SizedBox(height: 12),
                     _inputField(
-                      label: 'Kilometer',
+                      label: AppLocalizations.of(context)!.kilometer,
                       initialValue: viewModel.kilometer,
                       keyboardType: TextInputType.number,
                       onSave: (value) => viewModel.kilometer = value ?? '',
@@ -165,7 +166,7 @@ class _AddVehicleBottomSheetState extends BaseState<AddVehicleViewModel, AddVehi
                     ),
                     const SizedBox(height: 12),
                     _inputField(
-                      label: 'Fuel Type',
+                      label: AppLocalizations.of(context)!.fuelType,
                       initialValue: viewModel.fuelType,
                       onSave: (value) => viewModel.fuelType = value ?? '',
                       focusNode: _fuelFocus,
@@ -189,7 +190,7 @@ class _AddVehicleBottomSheetState extends BaseState<AddVehicleViewModel, AddVehi
                                     width: 20, 
                                     child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
                                   )
-                                : Text(widget.vehicle != null ? 'Update Vehicle' : 'Save Vehicle'),
+                                : Text(widget.vehicle != null ? AppLocalizations.of(context)!.updateVehicle : AppLocalizations.of(context)!.saveVehicle),
                           ),
                         );
                       },

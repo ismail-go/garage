@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 // flutter_mobx import is removed as Observer is not used.
 import 'package:garage/core/base/base_state.dart';
 import 'package:garage/data/model/vehicle/vehicle.dart';
@@ -93,9 +94,19 @@ class _AddVehicleBottomSheetState extends BaseState<AddVehicleViewModel, AddVehi
                   onSave: (value) => viewModel.fuelType = value ?? '',
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => viewModel.onTapSave(context),
-                  child: Text(widget.vehicle != null ? 'Update Vehicle' : 'Save Vehicle'),
+                Observer(
+                  builder: (_) {
+                    return ElevatedButton(
+                      onPressed: viewModel.isSaving ? null : () => viewModel.onTapSave(context),
+                      child: viewModel.isSaving 
+                          ? SizedBox(
+                              height: 20, 
+                              width: 20, 
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)
+                            )
+                          : Text(widget.vehicle != null ? 'Update Vehicle' : 'Save Vehicle'),
+                    );
+                  },
                 ),
                 SizedBox(height: 20),
               ],

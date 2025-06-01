@@ -12,6 +12,9 @@ abstract class _AddCustomerViewModel extends BaseViewModel with Store {
   final Customer? existingCustomer;
   final formKey = GlobalKey<FormState>();
   
+  @observable
+  bool isSaving = false;
+  
   _AddCustomerViewModel(this.onAddCustomer, this.existingCustomer) {
     if (existingCustomer != null) {
       fullName = existingCustomer!.fullName;
@@ -44,27 +47,44 @@ abstract class _AddCustomerViewModel extends BaseViewModel with Store {
     // TODO: implement dispose
   }
 
+  @action
   Future<void> onTapSave(BuildContext context) async {
-    formKey.currentState?.save();
-    final now = DateTime.now().millisecondsSinceEpoch;
-    
-    final customer = Customer(
-      ownerId: existingCustomer?.ownerId ?? '',
-      fullName: fullName,
-      companyName: companyName,
-      email: email,
-      phoneNumber: phoneNumber,
-      nationalId: existingCustomer?.nationalId ?? nationalId,
-      taxId: taxId,
-      address: address,
-      createdAt: existingCustomer?.createdAt ?? now,
-      updatedAt: now,
-      ownerType: existingCustomer?.ownerType ?? 'individual',
-      profilePhotoUrl: existingCustomer?.profilePhotoUrl ?? '',
-      vehicles: existingCustomer?.vehicles ?? [],
-    );
+    if (formKey.currentState?.validate() ?? false) {
+      formKey.currentState!.save();
+      isSaving = true;
+      try {
+        final now = DateTime.now().millisecondsSinceEpoch;
+        
+        final customer = Customer(
+          ownerId: existingCustomer?.ownerId ?? '',
+          fullName: fullName,
+          companyName: companyName,
+          email: email,
+          phoneNumber: phoneNumber,
+          nationalId: existingCustomer?.nationalId ?? nationalId,
+          taxId: taxId,
+          address: address,
+          createdAt: existingCustomer?.createdAt ?? now,
+          updatedAt: now,
+          ownerType: existingCustomer?.ownerType ?? 'individual',
+          profilePhotoUrl: existingCustomer?.profilePhotoUrl ?? '',
+          vehicles: existingCustomer?.vehicles ?? [],
+        );
 
-    await onAddCustomer(customer);
-    Navigator.pop(context);
+        await onAddCustomer(customer);
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        print("Error saving customer: $e");
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(existingCustomer != null ? "Error updating customer" : "Error saving customer"))
+          );
+        }
+      } finally {
+        isSaving = false;
+      }
+    }
   }
 }

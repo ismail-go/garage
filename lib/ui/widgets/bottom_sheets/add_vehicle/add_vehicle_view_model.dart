@@ -34,6 +34,9 @@ abstract class _AddVehicleViewModel extends BaseViewModel with Store {
   int? lastServiceDate;
   int? nextServiceDate;
 
+  @observable
+  bool isSaving = false;
+
   _AddVehicleViewModel(this.ownerId, this.onAddVehicleCallback, this.originalVehicle) {
     if (originalVehicle != null) {
       // If editing, populate fields from originalVehicle
@@ -52,29 +55,43 @@ abstract class _AddVehicleViewModel extends BaseViewModel with Store {
     }
   }
 
+  @action
   Future<void> onTapSave(BuildContext context) async {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save(); // Calls onSave for each TextFormField, updating the fields above
+      isSaving = true;
+      try {
+        final vehicleToSave = Vehicle(
+          vin: originalVehicle?.vin ?? Uuid().v4(), // Use existing VIN or generate new for new vehicle
+          ownerId: ownerId, 
+          manufacturer: manufacturer,
+          model: model,
+          year: year,
+          plateNo: plateNo,
+          kilometer: kilometer,
+          fuelType: fuelType,
+          createdAt: originalVehicle?.createdAt ?? DateTime.now().millisecondsSinceEpoch,
+          updatedAt: DateTime.now().millisecondsSinceEpoch,
+          driverId: originalVehicle?.driverId ?? '', // Preserve or default
+          imageUrl: imageUrl, 
+          lastServiceDate: lastServiceDate ?? originalVehicle?.lastServiceDate ?? 0,
+          nextServiceDue: nextServiceDate ?? originalVehicle?.nextServiceDue ?? 0,
+        );
 
-      final vehicleToSave = Vehicle(
-        vin: originalVehicle?.vin ?? Uuid().v4(), // Use existing VIN or generate new for new vehicle
-        ownerId: ownerId, 
-        manufacturer: manufacturer,
-        model: model,
-        year: year,
-        plateNo: plateNo,
-        kilometer: kilometer,
-        fuelType: fuelType,
-        createdAt: originalVehicle?.createdAt ?? DateTime.now().millisecondsSinceEpoch,
-        updatedAt: DateTime.now().millisecondsSinceEpoch,
-        driverId: originalVehicle?.driverId ?? '', // Preserve or default
-        imageUrl: imageUrl, 
-        lastServiceDate: lastServiceDate ?? originalVehicle?.lastServiceDate ?? 0,
-        nextServiceDue: nextServiceDate ?? originalVehicle?.nextServiceDue ?? 0,
-      );
-
-      await onAddVehicleCallback(vehicleToSave);
-      Navigator.pop(context); // Close bottom sheet
+        await onAddVehicleCallback(vehicleToSave);
+        if (context.mounted) {
+          Navigator.pop(context); // Close bottom sheet
+        }
+      } catch (e) {
+        print("Error saving vehicle: $e");
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(originalVehicle != null ? "Error updating vehicle" : "Error saving vehicle"))
+          );
+        }
+      } finally {
+        isSaving = false;
+      }
     }
   }
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:garage/core/base/base_state.dart';
 import 'package:garage/data/model/customer/customer.dart';
 import 'package:garage/ui/widgets/bottom_sheets/add_customer/add_customer_view_model.dart';
@@ -42,6 +43,7 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
                   onSave: (value) {
                     viewModel.fullName = value ?? "";
                   },
+                  validator: (value) => (value == null || value.isEmpty) ? 'Full Name is required' : null,
                 ),
                 SizedBox(height: 10),
                 _inputField(
@@ -58,6 +60,13 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
                   onSave: (value) {
                     viewModel.email = value ?? "";
                   },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return 'Email is required';
+                    if (!RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(value)) {
+                      return 'Enter a valid email';
+                    }
+                    return null;
+                  },
                 ),
                 SizedBox(height: 10),
                 _inputField(
@@ -67,6 +76,7 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
                   onSave: (value) {
                     viewModel.phoneNumber = value ?? "";
                   },
+                  validator: (value) => (value == null || value.isEmpty) ? 'Phone number is required' : null,
                 ),
                 SizedBox(height: 10),
                 _inputField(
@@ -96,9 +106,19 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
                   },
                 ),
                 SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => viewModel.onTapSave(context),
-                  child: Text(widget.customer != null ? 'Update' : 'Save'),
+                Observer(
+                  builder: (_) {
+                    return ElevatedButton(
+                      onPressed: viewModel.isSaving ? null : () => viewModel.onTapSave(context),
+                      child: viewModel.isSaving
+                          ? SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                            )
+                          : Text(widget.customer != null ? 'Update' : 'Save'),
+                    );
+                  },
                 ),
                 SizedBox(height: 20),
               ],
@@ -115,6 +135,7 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
     String? initialValue,
     TextInputType? keyboardType,
     int? maxLines,
+    String? Function(String?)? validator,
   }) {
     return TextFormField(
       decoration: InputDecoration(
@@ -127,6 +148,7 @@ class _AddCustomerBottomSheetState extends BaseState<AddCustomerViewModel, AddCu
       keyboardType: keyboardType,
       maxLines: maxLines ?? 1,
       onSaved: onSave,
+      validator: validator,
     );
   }
 }
